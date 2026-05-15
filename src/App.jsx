@@ -4,7 +4,7 @@ function App () {
   return (
     <>
       <section>
-        hola
+        hola mundo! 
       </section>
     </>
   )
