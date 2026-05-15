@@ -1,5 +1,5 @@
 function Footer () {
-  return <section>esto es un footer</section>
+  return <section>esto es footer</section>
 }
 
 export { Footer }
