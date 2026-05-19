@@ -1,11 +1,10 @@
 import './App.css'
+import { ReserveYourTurn } from './pages/ReserveYourTurn'
 
 function App () {
   return (
     <>
-      <section>
-        hola mundo! 
-      </section>
+      <ReserveYourTurn />
     </>
   )
 }

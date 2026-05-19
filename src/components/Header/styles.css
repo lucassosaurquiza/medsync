@@ -1,0 +1,15 @@
+.reserve-turn {
+  border: brown solid 2px;
+  max-width: 100vw;
+}
+
+.reserve-turn__container {
+  display: flex;
+}
+
+.reserve-turn__title {
+  color: var(--color-primary);
+  font-size: var(--font-h1);
+}
+
+.reserve-turn__subtitle {}
