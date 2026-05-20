@@ -7,6 +7,7 @@
   --color-text: #1f2937;
   --color-muted: #6b7280;
 
+  --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 20px;
 
@@ -16,16 +17,16 @@
   /* Font Family */
   --font-family-sans: 'Inter', -apple-system, sans-serif;
 
-   /* Font Sizes */
-  --font-display: 3rem;     /* 48px */
-  --font-h1: 2.25rem;      /* 36px */
-  --font-h2: 1.875rem;     /* 30px */
-  --font-h3: 1.5rem;       /* 24px */
-  --font-h4: 1.25rem;      /* 20px */
-  --font-body-lg: 1.125rem; /* 18px */
-  --font-body: 1rem;       /* 16px */
-  --font-small: 0.875rem;  /* 14px */
-  --font-caption: 0.75rem; /* 12px */
+/* Font Sizes */
+--font-display: 2.75rem;      /* 44px */
+--font-h1: 2rem;              /* 32px */
+--font-h2: 1.625rem;          /* 26px */
+--font-h3: 1.25rem;           /* 20px */
+--font-h4: 1rem;              /* 16px */
+--font-body-lg: 0.875rem;     /* 14px */
+--font-body: 0.75rem;         /* 12px */
+--font-small: 0.625rem;       /* 10px */
+--font-caption: 0.5rem;       /* 8px */
 
    /* Font Weights */
   --weight-regular: 400;
