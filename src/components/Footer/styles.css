@@ -1,0 +1,37 @@
+.footer {
+  width: 100%;
+  background-color: var(--color-bg);
+  padding: 24px 20px;
+  border: solid 1px gray;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 20px 0 0 rgba(0,0,0,0.12);
+}
+
+.footer__title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.footer__info {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.footer__paragraph {
+  font-size: 14px;
+  color: #6b7280;
+
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.footer__obxel {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}

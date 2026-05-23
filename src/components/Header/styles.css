@@ -17,6 +17,9 @@
   font-size: var(--font-h1);
 }
 
+.reserve-turn__subtitle {
+  font-size: var(--font-h4);
+}
 
 .reserve-turn__actions {
    display: none;

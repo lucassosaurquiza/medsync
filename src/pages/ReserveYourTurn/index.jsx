@@ -1,6 +1,9 @@
 import { AppointmentCalendar } from '../../components/Appointment/AppointmentCalendar'
 import { TimeSlots } from '../../components/Appointment/TimeSlots'
+import { Footer } from '../../components/Footer'
+import { Form } from '../../components/Form'
 import { Header } from '../../components/Header'
+import { Payments } from '../../components/Payments'
 import { SpecialistProfile } from '../../components/SpecialistProfile'
 import { MainLayout } from '../../layouts/MainLayout'
 
@@ -14,7 +17,10 @@ function ReserveYourTurn () {
         <SpecialistProfile />
         <AppointmentCalendar />
         <TimeSlots />
+        <Form />
+        <Payments />
       </MainLayout>
+      <Footer />
     </>
   )
 }
