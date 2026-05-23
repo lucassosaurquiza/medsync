@@ -22,11 +22,11 @@
 }
 
 .profile__details {
-  width: 100%;
+  min-width: 0;
 }
 
 .profile__subtitle {
-  width: 100%;
+  overflow-wrap: break-word;
   font-size: var(--font-h3);
   margin-bottom: 5px;
 }
