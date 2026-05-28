@@ -1,0 +1,172 @@
+.register {
+  min-height: 100vh;
+  padding: 20px 14px;
+}
+
+.register-header {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 12px;
+}
+
+.register-header__container {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  box-shadow: 0 8px 20px rgba(0, 122, 77, 0.25);
+}
+
+.register-header__icon {
+  color: white;
+}
+
+.register-header__title {
+  text-align: center;
+  color: var(--color-primary);
+  font-size: var(--font-h4);
+  font-weight: var(--weight-bold);
+  margin-bottom: 24px;
+}
+
+.register-header__subtitle {
+  text-align: center;
+  font-size: var(--font-h4);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.register-header__paragraph {
+  max-width: 300px;
+  margin: 0 auto 24px;
+  text-align: center;
+  font-size: var(--font-base);
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+/* Selector paciente / especialista */
+
+.account-type-selector {
+  display: flex;
+  max-width: 430px;
+  margin: 0 auto 24px;
+  padding: 4px;
+  background-color: #eef2ff;
+  border-radius: 999px;
+  border: 1px solid #dde3f5;
+}
+
+.account-type-selector button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 12px;
+  border-radius: 999px;
+  font-size: var(--font-h4);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.account-type-selector button.active {
+  background-color: #ffffff;
+  color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-weight: 600;
+  font-size: var(--font-h4);
+}
+
+/* Formularios */
+
+.register-form {
+  max-width: 330px;
+  margin: 0 auto;
+}
+
+.register-form__group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.register-form__label {
+  font-size: var(--font-small);
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.register-form__input,
+.register-form__select {
+  width: 100%;
+  height: 48px;
+  border: 1px solid #d4dfd8;
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: var(--font-base);
+  background-color: #ffffff;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.register-form__input:focus,
+.register-form__select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 122, 77, 0.12);
+}
+
+.register-form__password {
+  position: relative;
+}
+
+.register-form__password .register-form__input {
+  padding-right: 44px;
+}
+
+.register-form__eye {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.register-form__button {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background-color: var(--color-primary);
+  color: white;
+  font-size: var(--font-base);
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: all 0.2s ease;
+}
+
+.register-form__button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 122, 77, 0.25);
+}
+
+.register-form__login {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: var(--font-small);
+  color: var(--color-text);
+}
+
+.register-form__login a {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: none;
+}
