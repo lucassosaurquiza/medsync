@@ -1,7 +1,9 @@
 function NavBar () {
   return (
     <section>
-      <nav>esto es la navegacion</nav>
+      <nav>
+        <h1>Esto es un Navbar, si tienes imaginacion</h1>
+      </nav>
     </section>
   )
 }
