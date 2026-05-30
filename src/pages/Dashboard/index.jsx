@@ -75,7 +75,7 @@ function Dashboard() {
           </section>
         </section>
       </main>
-
+      <button className="new-turn-button">+ Nuevo Turno</button>
       <Footer />
     </>
   );
