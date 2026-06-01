@@ -3,7 +3,7 @@ import './styles.css'
 function LoginButton () {
   return (
     <>
-      <button className="login">Ingresar</button>
+      <button className="login-button">Ingresar</button>
     </>
   )
 }

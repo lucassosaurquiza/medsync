@@ -1,7 +1,13 @@
-function Home(){
-    return(
-        <h1>Hola Mundo</h1>
-    )
+import { Header } from '../../components/Header'
+import './styles.css'
+
+function Home () {
+  return(
+    <>
+    <Header/>
+    
+    </>
+  )
 }
 
-export { Home };
+export { Home }
