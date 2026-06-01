@@ -1,4 +1,4 @@
-.register {
+.register-button {
   padding: 16px 28px;
   color: var(--color-bg);
   font-size: var(--font-h3);
@@ -10,7 +10,7 @@
   box-shadow: none;
 }
 
-.register:hover {
+.register-button:hover {
   transform: scale(1.05);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }

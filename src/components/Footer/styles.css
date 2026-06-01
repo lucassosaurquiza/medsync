@@ -2,11 +2,11 @@
   width: 100%;
   background-color: var(--color-bg);
   padding: 24px 20px;
-  border: solid 1px gray;
+  border-top: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  box-shadow: 20px 0 0 rgba(0,0,0,0.12);
+  gap: 10px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
 }
 
 .footer__title {
@@ -18,20 +18,102 @@
 .footer__info {
   font-size: 14px;
   color: #6b7280;
-  line-height: 1.5;
+  line-height: 1.6;
+  max-width: 500px;
 }
 
 .footer__paragraph {
   font-size: 14px;
   color: #6b7280;
-
   display: flex;
   align-items: center;
   gap: 5px;
+  flex-wrap: wrap;
 }
 
 .footer__obxel {
   color: var(--color-primary);
   font-weight: 600;
   text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.footer__obxel:hover {
+  opacity: 0.8;
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (min-width: 768px) {
+  .footer {
+    padding: 32px 40px;
+    gap: 14px;
+  }
+
+  .footer__title {
+    font-size: 28px;
+  }
+
+  .footer__info {
+    font-size: 15px;
+  }
+
+  .footer__paragraph {
+    font-size: 15px;
+  }
+}
+
+/* =========================
+   DESKTOP
+========================= */
+
+@media (min-width: 1024px) {
+  .footer {
+    padding: 40px 80px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer__left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer__right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .footer__title {
+    font-size: 32px;
+  }
+
+  .footer__info {
+    font-size: 16px;
+  }
+
+  .footer__paragraph {
+    font-size: 16px;
+  }
+}
+
+/* =========================
+   LARGE DESKTOP
+========================= */
+
+@media (min-width: 1440px) {
+  .footer {
+    padding: 50px 120px;
+  }
+
+  .footer__title {
+    font-size: 36px;
+  }
 }
