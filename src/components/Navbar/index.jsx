@@ -1,5 +1,5 @@
-import { IoNotificationsOutline } from "react-icons/io5";
 import "./styles.css";
+import { Bell } from "lucide-react";
 
 
 function NavBar() {
@@ -10,7 +10,7 @@ function NavBar() {
 
         <div className="navbar-actions">
           <button className="notification-btn">
-            <IoNotificationsOutline />
+             <Bell size={24} strokeWidth={2} />
           </button>
 
           <img
