@@ -1,0 +1,138 @@
+/* MOBILE FIRST */
+.dashboard-layout {
+  background: #f4f6ff;
+  padding: 64px 32px 90px;
+}
+
+.sidebar {
+  display: none;
+}
+
+.dashboard-content {
+  width: 100%;
+  padding: 0;
+}
+
+.doctor-profile {
+  margin-bottom: 22px;
+}
+
+.doctor-profile h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.doctor-profile p {
+  margin: 4px 0 0;
+  font-size: 15px;
+  color: #374151;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.stat-card span {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #111827;
+}
+
+.stat-card strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 22px;
+  color: #111827;
+}
+
+.stat-card p {
+  margin: 8px 0 0;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.success {
+  color: #007f68;
+}
+
+.danger {
+  color: #d32f2f;
+}
+
+.agenda {
+  margin-top: 10px;
+}
+
+.agenda-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.agenda-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.agenda-header button {
+  border: none;
+  background: transparent;
+  color: #007f68;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.appointment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.new-turn-button {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  height: 48px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 999px;
+  background: #007f68;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 12px 28px rgba(0, 127, 104, 0.35);
+  cursor: pointer;
+  z-index: 20;
+}
+
+@media (max-width: 480px) {
+  .dashboard-layout {
+    padding: 64px 32px 80px;
+  }
+
+  .new-turn-button {
+    right: 18px;
+    bottom: 18px;
+    height: 44px;
+    font-size: 12px;
+    padding: 0 18px;
+  }
+}
