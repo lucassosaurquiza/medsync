@@ -1,0 +1,82 @@
+.benefit-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 24px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.benefit-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.benefit-card__icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background-color: #d8f0e8;
+  color: var(--color-primary);
+}
+
+.benefit-card__title {
+  font-size: var(--font-h3);
+  font-weight: var(--weight-semibold);
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+.benefit-card__description {
+  font-size: var(--font-body);
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* SECCION BENEFICIOS DESKTOP */
+
+@media (min-width: 1024px) {
+  .benefits__title {
+    font-size: var(--font-h1);
+    margin-bottom: 4rem;
+  }
+
+  .benefits__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .benefit-card {
+    padding: 2.5rem;
+    min-height: 320px;
+    justify-content: flex-start;
+  }
+
+  .benefit-card__icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+  }
+
+  .benefit-card__title {
+    font-size: var(--font-h1);
+  }
+
+  .benefit-card__description {
+    max-width: 100%;
+    font-size: var(--font-h4);
+    line-height: 1.7;
+  }
+}

@@ -1,18 +1,19 @@
 import './styles.css'
 import home from '../../assets/home.png'
 
-import { Crown } from 'lucide-react'
+import { Bell, CalendarClock, Clock, Crown } from 'lucide-react'
 import { Header } from '../../components/Header'
 import { MainLayout } from '../../layouts/MainLayout'
 import { StartButton } from '../../components/StartButton'
 import { AdviceButton } from '../../components/AdviceButton'
+import { BenefitCard } from '../../components/BenefitCard'
 
 function Home () {
   return (
     <>
       <Header />
       <MainLayout>
-        <div className='hero'>
+        <section className='hero'>
           <div className='hero__content'>
             <span className='hero__badge'>
               <Crown size={24} />
@@ -34,8 +35,34 @@ function Home () {
             </div>
           </div>
           <img className='hero__img' src={home} alt='' />
-        </div>
+        </section>
       </MainLayout>
+
+      <section className='benefits'>
+        <MainLayout>
+          <h2 className='benefits__title'>Beneficios</h2>
+
+          <div className='benefits__grid'>
+            <BenefitCard
+              icon={<Clock size={24} />}
+              title='Ahorra Tiempo'
+              description='Automatizá la gestión de turnos y liberá a tu secretaría de tareas repetitivas.'
+            />
+
+            <BenefitCard
+              icon={<CalendarClock size={24} />}
+              title='Imagen Profesional'
+              description='Brindá a tus pacientes un portal de reservas intuitivo y con tu propia marca.'
+            />
+
+            <BenefitCard
+              icon={<Bell size={24} />}
+              title='Recordatorios'
+              description='Alertas automáticas por WhatsApp para reducir el ausentismo hasta en un 40%.'
+            />
+          </div>
+        </MainLayout>
+      </section>
     </>
   )
 }

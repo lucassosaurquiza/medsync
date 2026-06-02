@@ -5,6 +5,7 @@
   justify-content: center;
   gap: 2rem;
   margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .hero__content {
@@ -88,5 +89,82 @@
     display: flex;
     gap: 1rem;
     align-items: center;
+  }
+}
+
+/* SECCION BENEFICIOS */
+
+.benefits {
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    rgba(99, 102, 241, 0.08) 100%
+  );
+}
+.benefits__title {
+  position: relative;
+  display: inline-block;
+  margin-top: 30px;
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  font-size: var(--font-h2);
+  font-weight: var(--weight-bold);
+}
+
+.benefits__title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 90px;
+  height: 8px;
+  background-color: var(--color-primary);
+  border-radius: 999px;
+}
+
+.benefits__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* SECCION BENEFICIOS DESKTOP */
+
+@media (min-width: 1024px) {
+  .benefits {}
+
+  .benefits__title {
+    font-size: var(--font-h1);
+    margin-bottom: 4rem;
+  }
+
+  .benefits__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .benefit-card {
+    padding: 2.5rem;
+    min-height: 320px;
+    justify-content: flex-start;
+  }
+
+  .benefit-card__icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+  }
+
+  .benefit-card__title {
+    font-size: var(--font-h2);
+  }
+
+  .benefit-card__description {
+    max-width: 100%;
+    font-size: var(--font-h1);
+    line-height: 1.7;
   }
 }
