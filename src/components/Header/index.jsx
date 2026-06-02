@@ -12,14 +12,18 @@ function Header () {
           <h1 className='header__title'>MedSync</h1>
         </div>
 
-        <div className='header__actions'>
-          <Link to='/'>Inicio</Link>
-          <Link to='/reserve-turn'>Reserva tu turno</Link>
+        <nav className='header-nav'>
+          <Link className='header-nav__home' to='/'>
+            Inicio
+          </Link>
+          <Link className='header-nav__turn' to='/reserve-turn'>
+            Reserva tu turno
+          </Link>
           <LoginButton />
           <RegisterButton />
-        </div>
+        </nav>
 
-        <button className='header__menu-button'>
+        <button className='header-button'>
           <Menu size={28} />
         </button>
       </header>
