@@ -1,0 +1,24 @@
+.advice-button {
+  background-color: transparent;
+  color: var(--color-tertiary);
+  border: 2px solid var(--color-tertiary);
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.advice-button:hover {
+  background-color: var(--color-tertiary);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.advice-button:active {
+  transform: translateY(0);
+}
