@@ -172,9 +172,8 @@
 
 .testimonials {
   background-color: var(--color-primary);
+  padding-bottom: 30px;
 }
-
-.testimonials__header {}
 
 .testimonials__title {
   color: white;
@@ -189,4 +188,25 @@
   color: white;
 }
 
-.testimonials__carousel {}
+/* SECCION TESTIMONIOS */
+
+.pricing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  padding: 30px 16px;
+}
+
+.pricing__container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pricing__title {
+  font-size: var(--font-h2);
+  font-weight: var(--weight-bold);
+  margin-bottom: 30px;
+  margin-top: 30px;
+}

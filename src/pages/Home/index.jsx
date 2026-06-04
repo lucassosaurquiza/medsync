@@ -8,6 +8,8 @@ import { StartButton } from '../../components/StartButton'
 import { AdviceButton } from '../../components/AdviceButton'
 import { BenefitCard } from '../../components/BenefitCard'
 import { TestimonialCarousel } from '../../components/TestimonialCarousel'
+import { Footer } from '../../components/Footer'
+import { PricingCard } from '../../components/PricingCard'
 
 function Home () {
   return (
@@ -78,6 +80,17 @@ function Home () {
           <TestimonialCarousel />
         </MainLayout>
       </section>
+
+      <section className='pricing'>
+        <MainLayout>
+          <div className='pricing__container'>
+            <h1 className='pricing__title'>Planes a tu medida</h1>
+            <PricingCard />
+          </div>
+        </MainLayout>
+      </section>
+
+      <Footer />
     </>
   )
 }
