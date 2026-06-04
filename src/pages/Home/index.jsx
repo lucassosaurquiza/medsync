@@ -7,6 +7,7 @@ import { MainLayout } from '../../layouts/MainLayout'
 import { StartButton } from '../../components/StartButton'
 import { AdviceButton } from '../../components/AdviceButton'
 import { BenefitCard } from '../../components/BenefitCard'
+import { TestimonialCarousel } from '../../components/TestimonialCarousel'
 
 function Home () {
   return (
@@ -61,6 +62,20 @@ function Home () {
               description='Alertas automáticas por WhatsApp para reducir el ausentismo hasta en un 40%.'
             />
           </div>
+        </MainLayout>
+      </section>
+
+      <section className='testimonials'>
+        <MainLayout>
+          <div className='testimonials__header'>
+            <h2 className='testimonials__title'>Lo que dicen los colegas</h2>
+
+            <p className='testimonials__description'>
+              Más de 500 profesionales ya transformaron su práctica.
+            </p>
+          </div>
+
+          <TestimonialCarousel />
         </MainLayout>
       </section>
     </>

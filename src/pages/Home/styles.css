@@ -95,12 +95,11 @@
 /* SECCION BENEFICIOS */
 
 .benefits {
-  background: linear-gradient(
-    180deg,
-    #ffffff 0%,
-    rgba(99, 102, 241, 0.08) 100%
-  );
+  background: linear-gradient(180deg,
+      #ffffff 0%,
+      rgba(99, 102, 241, 0.08) 100%);
 }
+
 .benefits__title {
   position: relative;
   display: inline-block;
@@ -168,3 +167,26 @@
     line-height: 1.7;
   }
 }
+
+/* SECCION TESTIMONIOS */
+
+.testimonials {
+  background-color: var(--color-primary);
+}
+
+.testimonials__header {}
+
+.testimonials__title {
+  color: white;
+  margin-bottom: 20px;
+  padding-top: 30px;
+  font-size: var(--font-h2);
+}
+
+.testimonials__description {
+  font-size: var(--font-h4);
+  margin-bottom: 30px;
+  color: white;
+}
+
+.testimonials__carousel {}
