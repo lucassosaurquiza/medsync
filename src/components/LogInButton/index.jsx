@@ -1,9 +1,13 @@
 import './styles.css'
 
+import { Link } from 'react-router-dom'
+
 function LoginButton () {
   return (
     <>
-      <button className="login-button">Ingresar</button>
+        <Link className='login-button' to='/Login'>
+          Ingresar
+        </Link>
     </>
   )
 }
