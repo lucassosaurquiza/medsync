@@ -1,15 +1,22 @@
-// CONEXION A EXPRESS
-
+// VARIABLES DE ENTORNO
 require("dotenv").config();
 
+// IMPORTS
 const express = require("express");
 const cors = require("cors");
+const pool = require("./config/db");
+const appointmentsRoutes = require("./routes/appointments.routes");
+const specialistsRoutes = require("./routes/specialists.routes");
+const patientsRoutes = require("./routes/patients.routes")
 
+// APP
 const app = express();
 
+// MIDDLEWARES
 app.use(cors());
 app.use(express.json());
 
+// RUTAS
 app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
@@ -17,16 +24,12 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+app.use("/api/appointments", appointmentsRoutes);
+app.use("/api/specialists", specialistsRoutes);
+app.use("/api/patients", patientsRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en puerto ${PORT}`);
-});
 
-// CONEXION A MYSQL
-
-const pool = require("./config/db");
-
+// TEST MYSQL
 async function testDB() {
   try {
     const connection = await pool.getConnection();
@@ -38,3 +41,10 @@ async function testDB() {
 }
 
 testDB();
+
+// SERVIDOR
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Servidor ejecutándose en puerto ${PORT}`);
+});
