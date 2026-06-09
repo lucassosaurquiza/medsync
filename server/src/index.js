@@ -7,7 +7,8 @@ const cors = require("cors");
 const pool = require("./config/db");
 const appointmentsRoutes = require("./routes/appointments.routes");
 const specialistsRoutes = require("./routes/specialists.routes");
-const patientsRoutes = require("./routes/patients.routes")
+const patientsRoutes = require("./routes/patients.routes");
+const authRoutes = require("./routes/auth.routes")
 
 // APP
 const app = express();
@@ -27,6 +28,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/appointments", appointmentsRoutes);
 app.use("/api/specialists", specialistsRoutes);
 app.use("/api/patients", patientsRoutes);
+app.use("/api/auth", authRoutes);
 
 
 // TEST MYSQL
