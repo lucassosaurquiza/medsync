@@ -1,6 +1,8 @@
 import { NavBar } from "../../components/Navbar";
 import { AppointmentCard } from "../../components/Appointment/AppointmentCard";
 import { Footer } from "../../components/Footer";
+import { DashboardSidebar } from "../../components/DashboardSidebar";
+import { WeeklyAgenda } from "../../components/WeeklyAgenda";
 
 import "./styles.css";
 
@@ -71,24 +73,7 @@ function Dashboard() {
 
         {/* DESKTOP */}
         <section className="desktop-view">
-          <aside className="desktop-sidebar">
-            <h2>MedSync</h2>
-
-            <div className="desktop-doctor">
-              <div className="desktop-avatar" />
-              <div>
-                <strong>Dr. Alejandro Sosa</strong>
-                <p>Cardiología</p>
-              </div>
-            </div>
-
-            <nav className="desktop-menu">
-              <button className="active">Agenda</button>
-              <button>Configuración</button>
-            </nav>
-
-            <button className="desktop-new-turn">+ Nuevo Turno</button>
-          </aside>
+          <DashboardSidebar />
 
           <section className="dashboard-main">
             <header className="desktop-header">
@@ -110,45 +95,7 @@ function Dashboard() {
               </div>
             </header>
 
-            <section className="weekly-agenda">
-              <div className="weekly-header">
-                <h2>Agenda Semanal</h2>
-                <div>
-                  <button>Semana</button>
-                  <button>Día</button>
-                </div>
-              </div>
-
-              <div className="weekly-grid">
-                <span></span>
-                <strong>Lun 13</strong>
-                <strong>Mar 14</strong>
-                <strong>Mié 15</strong>
-                <strong>Jue 16</strong>
-                <strong>Vie 17</strong>
-
-                <span>09:00</span>
-                <p>Luis Gomez</p>
-                <p>Marta Paz</p>
-                <p></p>
-                <p>Ana Ruiz</p>
-                <p></p>
-
-                <span>10:00</span>
-                <p></p>
-                <p className="blocked">Bloqueado</p>
-                <p>Pedro Sosa</p>
-                <p></p>
-                <p>Julia Fer</p>
-
-                <span>11:00</span>
-                <p>Carlos M.</p>
-                <p></p>
-                <p></p>
-                <p>Raul H.</p>
-                <p></p>
-              </div>
-            </section>
+            <WeeklyAgenda />
           </section>
 
           <aside className="dashboard-aside">

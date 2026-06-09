@@ -1,0 +1,78 @@
+.desktop-sidebar {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background: #ffffff;
+  border-right: 1px solid #dfe3ea;
+}
+
+.desktop-sidebar__logo {
+  margin: 0 0 36px;
+  color: #007f68;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.desktop-sidebar__doctor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 36px;
+}
+
+.desktop-sidebar__avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.desktop-sidebar__doctor strong {
+  font-size: 12px;
+  color: #111827;
+}
+
+.desktop-sidebar__doctor p {
+  margin: 3px 0 0;
+  font-size: 10px;
+  color: #6b7280;
+}
+
+.desktop-sidebar__menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.desktop-sidebar__menu button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  text-align: left;
+  background: transparent;
+  color: #374151;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.desktop-sidebar__menu button.active {
+  background: #dce6fb;
+}
+
+.desktop-sidebar__new-turn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: auto;
+  height: 48px;
+  border: none;
+  border-radius: 8px;
+  background: #007f68;
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}
