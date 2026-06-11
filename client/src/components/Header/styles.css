@@ -32,6 +32,39 @@
   transition: 0.2s ease;
 }
 
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-user__notification {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #007f5f;
+}
+
+.header-user__avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: #007f5f;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.header-user__logout {
+  border: none;
+  background: transparent;
+  color: #007f5f;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 /* Links */
 
 .header-nav__home,

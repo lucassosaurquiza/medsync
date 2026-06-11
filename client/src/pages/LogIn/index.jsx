@@ -1,10 +1,52 @@
 import './styles.css'
 
+import toast from 'react-hot-toast'
+import { useState } from 'react'
 import { Footer } from '../../components/Footer'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, Eye, Lock, Mail, BriefcaseMedical } from 'lucide-react'
 
 function Login () {
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const navigate = useNavigate()
+
+  const handleSubmit = async event => {
+    event.preventDefault()
+
+    const response = await fetch('http://localhost:3000/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        password
+      })
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      toast.error(data.message)
+      return
+    }
+
+    localStorage.setItem('token', data.token)
+    localStorage.setItem('user', JSON.stringify(data.user))
+
+    toast.success('Login exitoso')
+
+    if (data.user.role === 'patient') {
+      navigate('/')
+    }
+
+    if (data.user.role === 'specialist') {
+      navigate('/dashboard')
+    }
+  }
+
   return (
     <>
       <section className='login'>
@@ -22,7 +64,7 @@ function Login () {
             Ingresa tus credenciales para acceder a tu panel
           </p>
 
-          <form className='login-form'>
+          <form className='login-form' onSubmit={handleSubmit}>
             <div className='login-form__group'>
               <label className='login-form__label'>Correo electrónico</label>
 
@@ -33,6 +75,8 @@ function Login () {
                   className='login-form__input'
                   type='email'
                   placeholder='ejemplo@medsync.com'
+                  value={email}
+                  onChange={event => setEmail(event.target.value)}
                 />
               </div>
             </div>
@@ -47,6 +91,8 @@ function Login () {
                   className='login-form__input'
                   type='password'
                   placeholder='••••••••'
+                  value={password}
+                  onChange={event => setPassword(event.target.value)}
                 />
 
                 <button className='login-form__eye' type='button'>
