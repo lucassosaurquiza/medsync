@@ -7,7 +7,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, Eye, Lock, Mail, BriefcaseMedical } from 'lucide-react'
 
 function Login () {
-
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
@@ -38,13 +37,12 @@ function Login () {
 
     toast.success('Login exitoso')
 
-    if (data.user.role === 'patient') {
-      navigate('/')
-    }
-
     if (data.user.role === 'specialist') {
       navigate('/dashboard')
+      return
     }
+
+    navigate('/')
   }
 
   return (

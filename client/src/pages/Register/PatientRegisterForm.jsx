@@ -8,6 +8,7 @@ function PatientRegisterForm () {
   const navigate = useNavigate()
 
   const [name, setName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmedPassword, setConfirmedPassword] = useState('')
@@ -29,6 +30,7 @@ function PatientRegisterForm () {
           body: JSON.stringify({
             name,
             email,
+            lastName,
             password,
             role: 'patient'
           })
@@ -77,7 +79,7 @@ function PatientRegisterForm () {
     } catch {
       toast.error('Error al registrar paciente:')
     }
-    
+
     toast.success('Cuenta creada correctamente')
 
     setTimeout(() => {
@@ -88,13 +90,24 @@ function PatientRegisterForm () {
   return (
     <form className='register-form' onSubmit={handleSubmit}>
       <div className='register-form__group'>
-        <label className='register-form__label'>Nombre completo</label>
+        <label className='register-form__label'>Nombre</label>
 
         <input
           className='register-form__input'
-          placeholder='Ej. Juan Pérez'
+          placeholder='Ej. Juan'
           value={name}
           onChange={e => setName(e.target.value)}
+        />
+      </div>
+
+      <div className='register-form__group'>
+        <label className='register-form__label'>Apellido</label>
+
+        <input
+          className='register-form__input'
+          placeholder='Ej. Perez'
+          value={lastName}
+          onChange={e => setLastName(e.target.value)}
         />
       </div>
 
