@@ -86,6 +86,17 @@ function Dashboard() {
           </header>
 
           <WeeklyAgenda />
+          <footer className="desktop-footer">
+            <strong>MedSync</strong>
+
+            <nav>
+              <a href="#">Privacidad</a>
+              <a href="#">Términos</a>
+              <a href="#">Soporte</a>
+            </nav>
+
+            <p>© 2024 MedSync Argentina. Tecnología para la salud.</p>
+          </footer>
         </section>
 
         <DashboardAside />
