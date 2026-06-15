@@ -18,6 +18,5 @@ router.get("/:id", authMiddleware, roleMiddleware("patient", "specialist"), getA
 router.post("/", authMiddleware, roleMiddleware("patient"), createAppointment);
 router.put("/:id", authMiddleware, roleMiddleware("specialist"), updateAppointment);
 router.delete("/:id", authMiddleware, roleMiddleware("specialist"), deleteAppointment);
-router.delete("/:id", authMiddleware, deleteAppointment);
 
 module.exports = router;

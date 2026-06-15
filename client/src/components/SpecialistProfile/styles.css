@@ -1,16 +1,15 @@
 .profile {
   width: 100%;
-  margin-top: 30px;
 }
 
 .profile__container {
   display: flex;
+  text-align: left;
   align-items: center;
   gap: 20px;
   width: 100%;
-  background-color: white;
+  background-color: #fff;
   border-radius: var(--radius-md);
-  padding: 20px 30px;
 }
 
 .profile__img {
@@ -28,9 +27,33 @@
 .profile__subtitle {
   overflow-wrap: break-word;
   font-size: var(--font-h3);
+  font-weight: var(--weight-bold);
   margin-bottom: 5px;
 }
 
 .profile__specialist {
   font-size: var(--font-body-lg);
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  .profile__container {
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+  }
+
+  .profile__img {
+    width: 58px;
+    height: 58px;
+  }
+
+  .profile__subtitle {
+    font-size: 15px;
+  }
+
+  .profile__specialist {
+    font-size: 12px;
+  }
 }

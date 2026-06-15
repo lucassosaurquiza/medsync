@@ -4,17 +4,17 @@ const jwt = require("jsonwebtoken")
 
 // REGISTRAR USUARIO
 const register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, lastName, email, password, role } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const [result] = await pool.query(
       `
-      INSERT INTO users (name, email, password, role)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO users (name, lastName, email, password, role)
+      VALUES (?, ?, ?, ?, ?)
       `,
-      [name, email, hashedPassword, role]
+      [name, lastName, email, hashedPassword, role]
     );
 
     res.status(201).json({
@@ -25,7 +25,7 @@ const register = async (req, res) => {
     console.error("Error al registrar usuario:", error);
 
     if (error.code === 'ER_DUP_ENTRY') {
-      return res.status(409).json({
+      return res.status(500).json({
         message: 'El email ya está registrado'
       })
     }
@@ -78,6 +78,7 @@ const login = async (req, res) => {
       user: {
         id: user.id,
         name: user.name,
+        lastName: user.lastName,
         email: user.email,
         role: user.role
       }

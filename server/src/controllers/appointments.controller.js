@@ -7,8 +7,10 @@ const createAppointment = async (req, res) => {
     specialistId,
     patientId,
     date,
-    time
-  } = req.body;
+    time,
+    healthInsurance,
+    reason
+  } = req.body
 
   try {
     const [result] = await pool.query(
@@ -19,31 +21,35 @@ const createAppointment = async (req, res) => {
         patientId,
         date,
         time,
+        healthInsurance,
+        reason,
         status
       )
-      VALUES (?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
       `,
       [
         specialistId,
         patientId,
         date,
         time,
-        "pending"
+        healthInsurance || null,
+        reason || null,
+        'pending'
       ]
-    );
+    )
 
     res.status(201).json({
-      message: "Turno creado",
+      message: 'Turno creado',
       id: result.insertId
-    });
+    })
   } catch (error) {
-    console.error(error);
+    console.error('Error al crear turno:', error)
 
     res.status(500).json({
-      message: "Error al crear turno"
-    });
+      message: 'Error al crear turno'
+    })
   }
-};
+}
 
 // BUSCAR UN TURNO
 
@@ -57,7 +63,13 @@ const getAppointments = async (req, res) => {
         patient_user.name AS patient,
         appointments.date,
         appointments.time,
-        appointments.status
+        appointments.status,
+        appointments.healthInsurance,
+        appointments.reason,
+        patients.dni,
+        patients.phone,
+        patient_user.lastName AS patientLastName,
+        specialist_user.lastName AS specialistLastName
       FROM appointments
       JOIN specialists ON appointments.specialistId = specialists.id
       JOIN users AS specialist_user ON specialists.userId = specialist_user.id
@@ -89,7 +101,13 @@ const getAppointmentById = async (req, res) => {
         patient_user.name AS patient,
         appointments.date,
         appointments.time,
-        appointments.status
+        appointments.status,
+        appointments.healthInsurance,
+        appointments.reason,
+        patients.dni,
+        patients.phone,
+        patient_user.lastName AS patientLastName,
+        specialist_user.lastName AS specialistLastName
       FROM appointments
       JOIN specialists ON appointments.specialistId = specialists.id
       JOIN users AS specialist_user ON specialists.userId = specialist_user.id
