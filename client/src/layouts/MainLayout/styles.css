@@ -5,3 +5,9 @@
   padding-inline: 20px;
   box-sizing: border-box;
 }
+
+@media (max-width: 768px) {
+  .container {
+    padding-inline: 12px;
+  }
+}

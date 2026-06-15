@@ -1,5 +1,42 @@
 const pool = require("../config/db");
 
+const getPatientMe = async (req, res) => {
+  const userId = req.user.id
+
+  try {
+    const [rows] = await pool.query(
+      `
+      SELECT
+        patients.id,
+        patients.userId,
+        patients.dni,
+        patients.phone,
+        users.name,
+        users.lastName,
+        users.email
+      FROM patients
+      INNER JOIN users ON users.id = patients.userId
+      WHERE patients.userId = ?
+      `,
+      [userId]
+    )
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        message: 'Paciente no encontrado'
+      })
+    }
+
+    res.json(rows[0])
+  } catch (error) {
+    console.error('Error al obtener paciente:', error)
+
+    res.status(500).json({
+      message: 'Error al obtener paciente'
+    })
+  }
+}
+
 // OBTENER PACIENTE POR ID
 
 const getPatientById = async (req, res) => {
@@ -35,27 +72,29 @@ const getPatientById = async (req, res) => {
 // CREAR PACIENTE
 
 const createPatient = async (req, res) => {
-  const { userId, phone } = req.body;
+  const { userId, dni, phone } = req.body
 
   try {
     const [result] = await pool.query(
       `
-      INSERT INTO patients (userId, phone)
-      VALUES (?, ?)
+      INSERT INTO patients (userId, dni, phone)
+      VALUES (?, ?, ?)
       `,
-      [userId, phone]
-    );
+      [userId, dni || null, phone || null]
+    )
 
     res.status(201).json({
-      message: "Paciente creado correctamente",
+      message: 'Paciente creado correctamente',
       id: result.insertId
-    });
+    })
   } catch (error) {
+    console.error('Error al crear paciente:', error)
+
     res.status(500).json({
-      message: "Error al crear paciente"
-    });
+      message: 'Error al crear paciente'
+    })
   }
-};
+}
 
 // BUSCAR TODOS LOS PACIENTES
 
@@ -154,5 +193,6 @@ module.exports = {
   getPatients,
   updatePatient,
   deletePatient,
-  getPatientById
+  getPatientById,
+  getPatientMe
 };

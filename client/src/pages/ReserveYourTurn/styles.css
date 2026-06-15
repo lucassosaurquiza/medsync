@@ -4,7 +4,7 @@
 
 .reserve-turn__title {
   margin-bottom: 30px;
-  color: #0f172a;
+  color: var(--color-secondary);
   font-size: var(--font-h1);
 }
 

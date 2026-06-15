@@ -1,39 +1,72 @@
 .time {
-  margin-top: 30px;
+  margin-top: 0;
 }
 
 .time__subtitle {
   font-size: var(--font-body);
-  letter-spacing: 4px;
   font-weight: var(--weight-bold);
-  margin-bottom: 30px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.time__subtitle::after {
+  content: 'VIERNES 11 DE OCTUBRE';
+  display: block;
+  margin-top: 8px;
+  color: #64748b;
+  font-size: 10px;
+  letter-spacing: 2px;
 }
 
 .time-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 24px;
 }
 
 .time-container__button {
-  height: 70px;
-  border: 1px solid #bfc8c2;
-  border-radius: var(--radius-lg);
-  background-color: white;
-  font-size: var(--font-h4);
-  font-weight: 600;
+  height: 58px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background-color: #fff;
+  font-size: 15px;
+  font-weight: 800;
   cursor: pointer;
-  padding: 20px 60px;
 }
 
 .time-container__button--selected {
   background-color: var(--color-primary);
-  color: white;
-  box-shadow: 0 4px 12px rgba(2, 164, 91, 0.25);
+  transform: scale(1.02);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(0, 128, 96, 0.24);
 }
 
 .time-container__button--disable {
-  opacity: 0.4;
+  opacity: 0.45;
   cursor: not-allowed;
   text-decoration: line-through;
+}
+
+@media (max-width: 768px) {
+  .time__subtitle {
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
+
+  .time__subtitle::after {
+    font-size: 9px;
+  }
+
+  .time-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .time-container__button {
+    height: 44px;
+    font-size: 11px;
+    border-radius: 9px;
+  }
 }
