@@ -128,58 +128,155 @@ const getAppointmentById = async (req, res) => {
   }
 };
 
+// MIS TURNOS (PACIENTE LOGUEADO)
+
+const getMyAppointments = async (req, res) => {
+  try {
+    const userId = req.user.id
+
+    const [patientRows] = await pool.query(
+      `
+      SELECT id
+      FROM patients
+      WHERE userId = ?
+      `,
+      [userId]
+    )
+
+    if (patientRows.length === 0) {
+      return res.status(404).json({
+        message: 'Paciente no encontrado'
+      })
+    }
+
+    const patientId = patientRows[0].id
+
+    const [rows] = await pool.query(
+      `
+      SELECT
+        appointments.id,
+        appointments.date,
+        appointments.time,
+        appointments.status,
+        specialists.specialty,
+        specialist_user.name,
+        specialist_user.lastName
+      FROM appointments
+      JOIN specialists ON appointments.specialistId = specialists.id
+      JOIN users AS specialist_user ON specialists.userId = specialist_user.id
+      WHERE appointments.patientId = ?
+      ORDER BY appointments.date DESC
+      `,
+      [patientId]
+    )
+
+    res.json(rows)
+  } catch (error) {
+    console.error('Error al obtener mis turnos:', error)
+
+    res.status(500).json({
+      message: 'Error al obtener mis turnos'
+    })
+  }
+}
+
 // ACTUALIZAR TURNO
 
 const updateAppointment = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params
 
-  const {
-    specialistId,
-    patientId,
-    date,
-    time,
-    status
-  } = req.body;
+  const { status } = req.body
 
   try {
+    const [appointmentRows] = await pool.query(
+      `
+      SELECT
+        appointments.id,
+        appointments.date,
+        appointments.time,
+        appointments.status,
+        patients.userId AS patientUserId,
+        specialist_user.name AS specialistName,
+        specialist_user.lastName AS specialistLastName
+      FROM appointments
+      JOIN patients ON appointments.patientId = patients.id
+      JOIN specialists ON appointments.specialistId = specialists.id
+      JOIN users AS specialist_user ON specialists.userId = specialist_user.id
+      WHERE appointments.id = ?
+      `,
+      [id]
+    )
+
+    if (appointmentRows.length === 0) {
+      return res.status(404).json({
+        message: 'Turno no encontrado'
+      })
+    }
+
+    const appointment = appointmentRows[0]
+
     const [result] = await pool.query(
       `
       UPDATE appointments
-      SET
-        specialistId = ?,
-        patientId = ?,
-        date = ?,
-        time = ?,
-        status = ?
+      SET status = ?
       WHERE id = ?
       `,
-      [
-        specialistId,
-        patientId,
-        date,
-        time,
-        status,
-        id
-      ]
-    );
+      [status, id]
+    )
 
     if (result.affectedRows === 0) {
       return res.status(404).json({
-        message: "Turno no encontrado"
-      });
+        message: 'Turno no encontrado'
+      })
+    }
+
+    if (status === 'confirmed' || status === 'cancelled') {
+      const notificationTitle =
+        status === 'confirmed'
+          ? 'Turno confirmado'
+          : 'Turno cancelado'
+
+      const notificationMessage =
+        status === 'confirmed'
+          ? `Tu turno con ${appointment.specialistName} ${appointment.specialistLastName} fue confirmado.`
+          : `Tu turno con ${appointment.specialistName} ${appointment.specialistLastName} fue cancelado.`
+
+      const notificationType =
+        status === 'confirmed'
+          ? 'success'
+          : 'error'
+
+      await pool.query(
+        `
+        INSERT INTO notifications
+        (
+          userId,
+          title,
+          message,
+          type
+        )
+        VALUES (?, ?, ?, ?)
+        `,
+        [
+          appointment.patientUserId,
+          notificationTitle,
+          notificationMessage,
+          notificationType
+        ]
+      )
     }
 
     res.json({
-      message: "Turno actualizado correctamente"
-    });
+      message: 'Turno actualizado correctamente'
+    })
   } catch (error) {
-    console.error("Error al actualizar turno:", error);
+    console.error('Error al actualizar turno:', error)
 
     res.status(500).json({
-      message: "Error al actualizar turno"
-    });
+      message: 'Error al actualizar turno'
+    })
   }
-};
+}
 
 // ELIMINAR TURNO
 
@@ -216,5 +313,6 @@ module.exports = {
   getAppointmentById,
   createAppointment,
   updateAppointment,
-  deleteAppointment
+  deleteAppointment,
+  getMyAppointments
 };
