@@ -1,119 +1,95 @@
-.footer {
+.site-footer {
   width: 100%;
-  background-color: var(--color-bg);
-  padding: 24px 20px;
+  background-color: #ffffff;
   border-top: 1px solid #e5e7eb;
+  padding: 24px 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
+  gap: 12px;
+  box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.04);
 }
 
-.footer__title {
-  font-size: 24px;
+.site-footer__title {
+  font-size: var(--font-h4);
   font-weight: 700;
   color: var(--color-primary);
 }
 
-.footer__info {
-  font-size: 14px;
-  color: #6b7280;
+.site-footer__info {
+  font-size: 0.95rem;
+  color: #64748b;
   line-height: 1.6;
-  max-width: 500px;
 }
 
-.footer__paragraph {
-  font-size: 14px;
-  color: #6b7280;
+.site-footer__paragraph {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   flex-wrap: wrap;
+  font-size: 0.95rem;
+  color: #64748b;
 }
 
-.footer__obxel {
+.site-footer__obxel {
   color: var(--color-primary);
-  font-weight: 600;
   text-decoration: none;
-  transition: opacity 0.2s ease;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
-.footer__obxel:hover {
+.site-footer__obxel:hover {
   opacity: 0.8;
 }
 
-/* =========================
-   TABLET
-========================= */
+/* TABLET */
 
 @media (min-width: 768px) {
-  .footer {
+  .site-footer {
     padding: 32px 40px;
-    gap: 14px;
   }
 
-  .footer__title {
-    font-size: 28px;
+  .site-footer__title {
+    font-size: 2rem;
   }
 
-  .footer__info {
-    font-size: 15px;
-  }
-
-  .footer__paragraph {
-    font-size: 15px;
+  .site-footer__info,
+  .site-footer__paragraph {
+    font-size: 1rem;
   }
 }
 
-/* =========================
-   DESKTOP
-========================= */
+/* DESKTOP */
 
 @media (min-width: 1024px) {
-  .footer {
+  .site-footer {
     padding: 40px 80px;
     flex-direction: row;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
   }
 
-  .footer__left {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  .site-footer__title {
+    font-size: 2.2rem;
   }
 
-  .footer__right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
+  .site-footer__info {
+    text-align: center;
+    flex: 1;
+  }
+
+  .site-footer__paragraph {
     justify-content: flex-end;
-  }
-
-  .footer__title {
-    font-size: 32px;
-  }
-
-  .footer__info {
-    font-size: 16px;
-  }
-
-  .footer__paragraph {
-    font-size: 16px;
   }
 }
 
-/* =========================
-   LARGE DESKTOP
-========================= */
+/* LARGE DESKTOP */
 
 @media (min-width: 1440px) {
-  .footer {
-    padding: 50px 120px;
+  .site-footer {
+    padding: 48px 120px;
   }
 
-  .footer__title {
-    font-size: 36px;
+  .site-footer__title {
+    font-size: 2.4rem;
   }
 }

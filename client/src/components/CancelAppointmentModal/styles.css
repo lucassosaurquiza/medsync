@@ -1,0 +1,123 @@
+.cancel-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.cancel-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.cancel-modal__content {
+  position: relative;
+  z-index: 1;
+  width: min(440px, calc(100% - 32px));
+  margin: 10vh auto 0;
+  background-color: #fff;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.24);
+}
+
+.cancel-modal__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.cancel-modal__icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.cancel-modal__title {
+  color: #0f172a;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.cancel-modal__description {
+  color: #64748b;
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.cancel-modal__appointment {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.cancel-modal__appointment h3 {
+  color: #0f172a;
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.cancel-modal__appointment p {
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.cancel-modal__details {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cancel-modal__warning {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+.cancel-modal__actions {
+  display: grid;
+  gap: 10px;
+}
+
+.cancel-modal__button {
+  border: none;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.cancel-modal__button--danger {
+  background-color: #dc2626;
+  color: #fff;
+}
+
+.cancel-modal__button--secondary {
+  background-color: #eef2ff;
+  color: #334155;
+}

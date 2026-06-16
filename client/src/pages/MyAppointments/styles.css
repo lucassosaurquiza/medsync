@@ -89,6 +89,31 @@
   font-weight: 700;
 }
 
+.next-appointment--empty {
+  background: #fff;
+  color: #0f172a;
+  border: 1px dashed #94a3b8;
+  box-shadow: none;
+}
+
+.next-appointment--empty .next-appointment__label {
+  color: var(--color-primary);
+}
+
+.next-appointment--empty p {
+  color: #64748b;
+}
+
+.next-appointment__button {
+  background-color: var(--color-primary);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .my-appointments__filters {
   display: flex;
   gap: 12px;
@@ -119,7 +144,7 @@
 
 .appointment-card {
   display: grid;
-  grid-template-columns: 58px 1fr auto;
+  grid-template-columns: 58px minmax(0, 1fr) auto;
   align-items: center;
   gap: 18px;
   background-color: #fff;
@@ -127,6 +152,16 @@
   border-radius: 18px;
   padding: 20px;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.appointment-card--cancelled {
+  opacity: 0.62;
+}
+
+.appointment-card--cancelled .appointment-card__avatar {
+  background-color: #f1f5f9;
+  color: #94a3b8;
 }
 
 .appointment-card__avatar {
@@ -166,6 +201,14 @@
   font-weight: 600;
 }
 
+.appointment-card__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
 .appointment-status {
   border-radius: 999px;
   padding: 8px 14px;
@@ -194,6 +237,22 @@
   color: #fff;
 }
 
+.appointment-card__cancel {
+  border: none;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 9px 15px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.appointment-card__cancel:hover {
+  background-color: #fecaca;
+  transform: translateY(-1px);
+}
+
 @media (max-width: 768px) {
   .my-appointments {
     padding: 28px 0;
@@ -203,16 +262,21 @@
     font-size: 28px;
   }
 
-  .next-appointment,
-  .appointment-card {
-    grid-template-columns: 1fr;
-  }
-
   .next-appointment {
     flex-direction: column;
   }
 
   .appointment-card {
+    grid-template-columns: 1fr;
     align-items: flex-start;
+  }
+
+  .appointment-card__actions {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .appointment-card__cancel {
+    width: 100%;
   }
 }

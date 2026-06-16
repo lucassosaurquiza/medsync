@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Header } from '../../components/Header'
 import { Footer } from '../../components/Footer'
 import { MainLayout } from '../../layouts/MainLayout'
+import { CancelAppointmentModal } from '../../components/CancelAppointmentModal'
 
 const statusOptions = ['all', 'pending', 'confirmed', 'cancelled']
 
@@ -11,6 +12,8 @@ function MyAppointments () {
   const [appointments, setAppointments] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedStatus, setSelectedStatus] = useState('all')
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
+  const [selectedAppointment, setSelectedAppointment] = useState(null)
 
   useEffect(() => {
     const getAppointments = async () => {
@@ -75,12 +78,69 @@ function MyAppointments () {
   }
 
   const filteredAppointments = appointments.filter(appointment => {
-    if (selectedStatus === 'all') return true
+    if (selectedStatus === 'all') {
+      return appointment.status !== 'cancelled'
+    }
 
     return appointment.status === selectedStatus
   })
 
-  const nextAppointment = appointments[0]
+  const nextAppointment = appointments.find(
+    appointment =>
+      appointment.status === 'pending' || appointment.status === 'confirmed'
+  )
+
+  const handleOpenCancelModal = appointment => {
+    setSelectedAppointment({
+      ...appointment,
+      formattedDate: formatDate(appointment.date),
+      formattedTime: formatTime(appointment.time)
+    })
+
+    setIsCancelModalOpen(true)
+  }
+
+  const handleCloseCancelModal = () => {
+    setIsCancelModalOpen(false)
+    setSelectedAppointment(null)
+  }
+
+  const handleCancelAppointment = async () => {
+    if (!selectedAppointment) return
+
+    const token = localStorage.getItem('token')
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/appointments/${selectedAppointment.id}/cancel`,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        alert(data.message)
+        return
+      }
+
+      setAppointments(prevAppointments =>
+        prevAppointments.map(appointment =>
+          appointment.id === selectedAppointment.id
+            ? { ...appointment, status: 'cancelled' }
+            : appointment
+        )
+      )
+
+      handleCloseCancelModal()
+    } catch {
+      alert('Error al cancelar turno')
+    }
+  }
 
   return (
     <>
@@ -105,7 +165,7 @@ function MyAppointments () {
             </section>
           ) : (
             <>
-              {nextAppointment && (
+              {nextAppointment ? (
                 <section className='next-appointment'>
                   <div className='next-appointment__content'>
                     <span className='next-appointment__label'>
@@ -130,6 +190,25 @@ function MyAppointments () {
                     {getStatusText(nextAppointment.status)}
                   </span>
                 </section>
+              ) : (
+                <section className='next-appointment next-appointment--empty'>
+                  <div className='next-appointment__content'>
+                    <span className='next-appointment__label'>
+                      Próximo turno
+                    </span>
+
+                    <h2>No tenés próximos turnos</h2>
+
+                    <p>
+                      Reservá una nueva consulta y vas a poder verla en esta
+                      sección.
+                    </p>
+                  </div>
+
+                  <a className='next-appointment__button' href='/reserve-turn'>
+                    Reservar turno
+                  </a>
+                </section>
               )}
 
               <section className='my-appointments__filters'>
@@ -141,6 +220,7 @@ function MyAppointments () {
                         ? 'my-appointments__filter my-appointments__filter--active'
                         : 'my-appointments__filter'
                     }
+                    type='button'
                     onClick={() => setSelectedStatus(status)}
                   >
                     {getFilterText(status)}
@@ -150,7 +230,14 @@ function MyAppointments () {
 
               <section className='my-appointments__list'>
                 {filteredAppointments.map(appointment => (
-                  <article key={appointment.id} className='appointment-card'>
+                  <article
+                    key={appointment.id}
+                    className={
+                      appointment.status === 'cancelled'
+                        ? 'appointment-card appointment-card--cancelled'
+                        : 'appointment-card'
+                    }
+                  >
                     <div className='appointment-card__avatar'>
                       {appointment.name?.charAt(0).toUpperCase()}
                     </div>
@@ -170,11 +257,23 @@ function MyAppointments () {
                       </div>
                     </div>
 
-                    <span
-                      className={`appointment-status appointment-status--${appointment.status}`}
-                    >
-                      {getStatusText(appointment.status)}
-                    </span>
+                    <div className='appointment-card__actions'>
+                      <span
+                        className={`appointment-status appointment-status--${appointment.status}`}
+                      >
+                        {getStatusText(appointment.status)}
+                      </span>
+
+                      {appointment.status !== 'cancelled' && (
+                        <button
+                          className='appointment-card__cancel'
+                          type='button'
+                          onClick={() => handleOpenCancelModal(appointment)}
+                        >
+                          Cancelar turno
+                        </button>
+                      )}
+                    </div>
                   </article>
                 ))}
               </section>
@@ -184,6 +283,13 @@ function MyAppointments () {
       </MainLayout>
 
       <Footer />
+
+      <CancelAppointmentModal
+        isOpen={isCancelModalOpen}
+        appointment={selectedAppointment}
+        onClose={handleCloseCancelModal}
+        onConfirm={handleCancelAppointment}
+      />
     </>
   )
 }

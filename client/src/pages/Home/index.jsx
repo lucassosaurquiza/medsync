@@ -89,7 +89,6 @@ function Home () {
           </div>
         </MainLayout>
       </section>
-
       <Footer />
     </>
   )

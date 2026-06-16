@@ -10,11 +10,14 @@ const {
   createAppointment,
   updateAppointment,
   deleteAppointment,
-  getMyAppointments
+  getMyAppointments,
+  cancelMyAppointment
 } = require("../controllers/appointments.controller");
 
 
 router.get("/my-appointments", authMiddleware, roleMiddleware("patient"), getMyAppointments);
+router.patch("/:id/cancel", authMiddleware, roleMiddleware("patient"), cancelMyAppointment);
+
 router.get("/", authMiddleware, roleMiddleware("patient", "specialist"), getAppointments);
 router.get("/:id", authMiddleware, roleMiddleware("patient", "specialist"), getAppointmentById);
 

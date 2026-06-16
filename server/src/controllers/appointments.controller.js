@@ -278,6 +278,67 @@ const updateAppointment = async (req, res) => {
   }
 }
 
+// CANCELAR TURNO
+
+const cancelMyAppointment = async (req, res) => {
+  const { id } = req.params
+  const userId = req.user.id
+
+  try {
+    const [appointmentRows] = await pool.query(
+      `
+      SELECT
+        appointments.id,
+        appointments.status,
+        patients.userId
+      FROM appointments
+      JOIN patients ON appointments.patientId = patients.id
+      WHERE appointments.id = ?
+      `,
+      [id]
+    )
+
+    if (appointmentRows.length === 0) {
+      return res.status(404).json({
+        message: 'Turno no encontrado'
+      })
+    }
+
+    const appointment = appointmentRows[0]
+
+    if (appointment.userId !== userId) {
+      return res.status(403).json({
+        message: 'No tenés permiso para cancelar este turno'
+      })
+    }
+
+    if (appointment.status === 'cancelled') {
+      return res.status(400).json({
+        message: 'El turno ya está cancelado'
+      })
+    }
+
+    await pool.query(
+      `
+      UPDATE appointments
+      SET status = 'cancelled'
+      WHERE id = ?
+      `,
+      [id]
+    )
+
+    res.json({
+      message: 'Turno cancelado correctamente'
+    })
+  } catch (error) {
+    console.error('Error al cancelar turno:', error)
+
+    res.status(500).json({
+      message: 'Error al cancelar turno'
+    })
+  }
+}
+
 // ELIMINAR TURNO
 
 const deleteAppointment = async (req, res) => {
@@ -314,5 +375,6 @@ module.exports = {
   createAppointment,
   updateAppointment,
   deleteAppointment,
-  getMyAppointments
+  getMyAppointments,
+  cancelMyAppointment
 };
