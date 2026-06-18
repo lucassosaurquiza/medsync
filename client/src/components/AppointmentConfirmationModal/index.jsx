@@ -1,4 +1,5 @@
-import { CalendarPlus, Check, Download, MapPin, X } from 'lucide-react'
+import { Check, MapPin, X } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 import './styles.css'
 
@@ -68,14 +69,19 @@ function AppointmentConfirmationModal ({ isOpen, onClose, appointment }) {
               <p>• Traer credencial de prepaga y DNI.</p>
             </div>
 
-            <button className='appointment-modal__button appointment-modal__button--primary'>
-              <CalendarPlus size={18} />
-              Agregar al calendario
-            </button>
+            <Link
+              className='appointment-modal__button appointment-modal__button--primary'
+              to='/my-appointments'
+            >
+              Ver mis turnos
+            </Link>
 
-            <button className='appointment-modal__button appointment-modal__button--secondary'>
-              <Download size={18} />
-              Descargar PDF
+            <button
+              className='appointment-modal__button appointment-modal__button--secondary'
+              type='button'
+              onClick={onClose}
+            >
+              Cerrar
             </button>
           </aside>
         </div>

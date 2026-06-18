@@ -1,4 +1,8 @@
 .start-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
   background-color: var(--color-primary);
   color: white;
   border: none;

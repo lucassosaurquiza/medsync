@@ -1,9 +1,10 @@
 import './styles.css'
+import { Link } from 'react-router-dom'
 
 function StartButton () {
   return (
     <>
-      <button className='start-button'>Comenzar Ahora</button>
+      <Link className='start-button' to='/register'>Comenzar ahora</Link>
     </>
   )
 }

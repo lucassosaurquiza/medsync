@@ -112,6 +112,12 @@
   cursor: pointer;
 }
 
+.cancel-modal__button:disabled,
+.cancel-modal__close:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 .cancel-modal__button--danger {
   background-color: #dc2626;
   color: #fff;

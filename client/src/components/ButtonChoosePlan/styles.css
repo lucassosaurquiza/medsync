@@ -1,4 +1,8 @@
 .choose-plan {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
   width: 100%;
   max-width: 300px;
   padding: 12px;

@@ -6,16 +6,25 @@ function CancelAppointmentModal ({
   isOpen,
   appointment,
   onClose,
-  onConfirm
+  onConfirm,
+  isSubmitting
 }) {
   if (!isOpen || !appointment) return null
 
   return (
     <div className='cancel-modal'>
-      <div className='cancel-modal__overlay' onClick={onClose} />
+      <div
+        className='cancel-modal__overlay'
+        onClick={isSubmitting ? undefined : onClose}
+      />
 
       <section className='cancel-modal__content'>
-        <button className='cancel-modal__close' type='button' onClick={onClose}>
+        <button
+          className='cancel-modal__close'
+          type='button'
+          onClick={onClose}
+          disabled={isSubmitting}
+        >
           <X size={20} />
         </button>
 
@@ -52,6 +61,7 @@ function CancelAppointmentModal ({
             className='cancel-modal__button cancel-modal__button--secondary'
             type='button'
             onClick={onClose}
+            disabled={isSubmitting}
           >
             Mantener turno
           </button>
@@ -60,8 +70,9 @@ function CancelAppointmentModal ({
             className='cancel-modal__button cancel-modal__button--danger'
             type='button'
             onClick={onConfirm}
+            disabled={isSubmitting}
           >
-            Confirmar cancelación
+            {isSubmitting ? 'Cancelando...' : 'Confirmar cancelación'}
           </button>
         </div>
       </section>

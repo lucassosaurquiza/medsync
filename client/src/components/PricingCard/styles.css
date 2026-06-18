@@ -76,3 +76,10 @@
   font-size: var(--font-body);
   color: #00133f;
 }
+
+.pricing-card__payment {
+  margin: 0 0 16px;
+  color: #475569;
+  font-size: 13px;
+  text-align: center;
+}

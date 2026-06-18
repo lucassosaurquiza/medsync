@@ -4,11 +4,19 @@ import toast from 'react-hot-toast'
 import { useState } from 'react'
 import { Footer } from '../../components/Footer'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, Eye, Lock, Mail, BriefcaseMedical } from 'lucide-react'
+import {
+  ArrowRight,
+  BriefcaseMedical,
+  Eye,
+  EyeOff,
+  Lock,
+  Mail
+} from 'lucide-react'
 
 function Login () {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async event => {
@@ -87,21 +95,27 @@ function Login () {
 
                 <input
                   className='login-form__input'
-                  type='password'
+                  type={showPassword ? 'text' : 'password'}
                   placeholder='••••••••'
                   value={password}
                   onChange={event => setPassword(event.target.value)}
                 />
 
-                <button className='login-form__eye' type='button'>
-                  <Eye size={20} />
+                <button
+                  className='login-form__eye'
+                  type='button'
+                  onClick={() => setShowPassword(currentValue => !currentValue)}
+                  aria-label={
+                    showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
+                  }
+                  title={
+                    showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
+                  }
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
-
-            <Link className='login-form__forgot' to='/forgot-password'>
-              ¿Olvidé mi contraseña?
-            </Link>
 
             <button className='login-form__button' type='submit'>
               Ingresar

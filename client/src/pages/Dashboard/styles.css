@@ -1,217 +1,187 @@
-/* MOBILE FIRST */
-.dashboard-layout {
-  background: #f4f6ff;
-  padding: 64px 32px 90px;
+.dashboard {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  background-color: #f4f6ff;
+  overflow-x: hidden;
 }
 
-.desktop-view {
-  display: none;
+.dashboard__content {
+  position: relative;
+  min-width: 0;
+  padding: 32px;
+  overflow-x: hidden;
 }
 
-.dashboard-content {
-  width: 100%;
-  padding: 0;
+.dashboard__notifications {
+  position: absolute;
+  top: 36px;
+  right: 36px;
+  z-index: 10;
 }
 
-.doctor-profile {
-  margin-bottom: 22px;
-}
+@media (max-width: 900px) {
+  .dashboard {
+    display: block;
+  }
 
-.doctor-profile h2 {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 800;
-  color: #1f2937;
-}
+  .dashboard__content {
+    padding: 20px;
+  }
 
-.doctor-profile p {
-  margin: 4px 0 0;
-  font-size: 15px;
-  color: #374151;
-}
-
-.agenda {
-  margin-top: 10px;
-}
-
-.agenda-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.agenda-header h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 800;
-  color: #1f2937;
-}
-
-.agenda-header button {
-  border: none;
-  background: transparent;
-  color: #007f68;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.appointment-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.new-turn-button {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  height: 48px;
-  padding: 0 22px;
-  border: none;
-  border-radius: 999px;
-  background: #007f68;
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 800;
-  box-shadow: 0 12px 28px rgba(0, 127, 104, 0.35);
-  cursor: pointer;
-  z-index: 20;
+  .dashboard__notifications {
+    top: 24px;
+    right: 24px;
+  }
 }
 
 @media (max-width: 480px) {
-  .dashboard-layout {
-    padding: 64px 32px 80px;
+  .dashboard__content {
+    padding: 16px;
   }
 
-  .new-turn-button {
-    right: 18px;
-    bottom: 18px;
-    height: 44px;
-    font-size: 12px;
-    padding: 0 18px;
+  .dashboard__notifications {
+    top: 20px;
+    right: 20px;
   }
 }
 
-/* DESKTOP */
-@media (min-width: 1024px) {
-  .navbar-container,
-  .footer,
-  .mobile-view,
-  .new-turn-button {
-    display: none;
-  }
+.dashboard-mobile-header {
+  display: none;
+}
 
-  .dashboard-layout {
-    max-width: 1120px;
-    min-height: 620px;
-    margin: 28px auto;
-    padding: 0;
-    border: 4px solid #756cff;
-    border-radius: 10px;
-    overflow: hidden;
-    background: #f7f8ff;
-  }
+.dashboard-sidebar {
+  min-height: 100vh;
+  background-color: #fff;
+  border-right: 1px solid #e2e8f0;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+}
 
-  .desktop-view {
-    display: grid;
-    grid-template-columns: 210px 1fr 260px;
-    min-height: 620px;
-  }
+.dashboard-sidebar__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
 
-  .dashboard-main {
-    padding: 24px 20px;
-  }
+.dashboard-sidebar__close {
+  display: none;
+}
 
-  .desktop-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 22px;
-  }
+.dashboard-sidebar__brand {
+  margin-bottom: 36px;
+}
 
-  .desktop-header h1 {
-    margin: 0;
-    font-size: 26px;
-    font-weight: 800;
-    color: #0f172a;
-  }
+.dashboard-sidebar__brand h2 {
+  color: var(--color-primary);
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
 
-  .desktop-header p {
-    margin: 5px 0 0;
-    font-size: 13px;
-    color: #475569;
-  }
+.dashboard-sidebar__brand span {
+  color: #64748b;
+  font-size: 13px;
+}
 
-  .desktop-stats {
-    display: flex;
-    gap: 14px;
-  }
+.dashboard-sidebar__nav {
+  display: grid;
+  gap: 10px;
+}
 
-  .desktop-stats article {
-    width: 135px;
-    height: 70px;
-    padding: 12px;
-    border-radius: 8px;
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-  }
+.dashboard-sidebar__link {
+  border: none;
+  background-color: transparent;
+  color: #475569;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+}
 
-  .desktop-stats span {
-    display: block;
-    font-size: 8px;
-    letter-spacing: 1px;
-    color: #334155;
-  }
+.dashboard-sidebar__link:hover,
+.dashboard-sidebar__link--active {
+  background-color: #ecfdf5;
+  color: var(--color-primary);
+}
 
-  .desktop-stats strong {
-    display: block;
-    margin-top: 6px;
-    font-size: 18px;
-    color: #0f172a;
-  }
+.dashboard-sidebar__logout {
+  margin-top: auto;
+  border: none;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
 
-  .dashboard-aside {
-    padding: 108px 20px 24px 0;
-  }
+.dashboard-sidebar__overlay {
+  display: none;
+}
 
-  .desktop-footer {
+@media (max-width: 900px) {
+  .dashboard-mobile-header {
+    height: 72px;
+    padding: 0 18px;
+    background-color: #fff;
+    border-bottom: 1px solid #e2e8f0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 24px;
-    padding-top: 20px;
-    border-top: 1px solid #d1d5db;
-    color: #475569;
-    font-size: 11px;
   }
 
-  .desktop-footer strong {
-    color: #007f68;
-    font-size: 15px;
+  .dashboard-mobile-header h2 {
+    color: var(--color-primary);
+    font-size: 26px;
+    font-weight: 800;
   }
 
-  .desktop-footer nav {
+  .dashboard-mobile-header button {
+    border: none;
+    background-color: transparent;
+    color: #0f172a;
+    cursor: pointer;
+  }
+
+  .dashboard-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1001;
+    width: min(320px, 86vw);
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    border-right: 1px solid #e2e8f0;
+  }
+
+  .dashboard-sidebar--open {
+    transform: translateX(0);
+  }
+
+  .dashboard-sidebar__close {
     display: flex;
-    gap: 22px;
+    border: none;
+    background: transparent;
+    color: #0f172a;
+    cursor: pointer;
   }
 
-  .desktop-footer a {
-    color: #475569;
-    text-decoration: none;
-    font-weight: 600;
+  .dashboard-sidebar__overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background-color: rgba(15, 23, 42, 0.45);
   }
-  
-  .desktop-view {
-  display: grid;
-  grid-template-columns: 230px minmax(0, 1fr) 280px;
-  min-height: 720px;
-  }
-
-  .dashboard-main {
-    min-width: 0;
-    padding: 24px 20px;
-  }
-  
 }

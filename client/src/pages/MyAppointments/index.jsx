@@ -1,6 +1,7 @@
 import './styles.css'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
+import { useSmartPolling } from '../../hooks/useSmartPolling'
 import { Header } from '../../components/Header'
 import { Footer } from '../../components/Footer'
 import { MainLayout } from '../../layouts/MainLayout'
@@ -14,35 +15,41 @@ function MyAppointments () {
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
   const [selectedAppointment, setSelectedAppointment] = useState(null)
+  const [isCancelling, setIsCancelling] = useState(false)
 
-  useEffect(() => {
-    const getAppointments = async () => {
-      const token = localStorage.getItem('token')
+  const getAppointments = useCallback(async signal => {
+    const token = localStorage.getItem('token')
 
-      try {
-        const response = await fetch(
-          'http://localhost:3000/api/appointments/my-appointments',
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
+    try {
+      const response = await fetch(
+        'http://localhost:3000/api/appointments/my-appointments',
+        {
+          signal,
+          headers: {
+            Authorization: `Bearer ${token}`
           }
-        )
-
-        const data = await response.json()
-
-        if (response.ok) {
-          setAppointments(data)
         }
-      } catch (error) {
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'No se pudieron cargar los turnos')
+      }
+
+      setAppointments(Array.isArray(data) ? data : [])
+    } catch (error) {
+      if (error.name !== 'AbortError') {
         console.error(error)
-      } finally {
+      }
+    } finally {
+      if (!signal.aborted) {
         setIsLoading(false)
       }
     }
-
-    getAppointments()
   }, [])
+
+  useSmartPolling(getAppointments)
 
   const getStatusText = status => {
     const statusMap = {
@@ -106,9 +113,10 @@ function MyAppointments () {
   }
 
   const handleCancelAppointment = async () => {
-    if (!selectedAppointment) return
+    if (!selectedAppointment || isCancelling) return
 
     const token = localStorage.getItem('token')
+    setIsCancelling(true)
 
     try {
       const response = await fetch(
@@ -139,6 +147,8 @@ function MyAppointments () {
       handleCloseCancelModal()
     } catch {
       alert('Error al cancelar turno')
+    } finally {
+      setIsCancelling(false)
     }
   }
 
@@ -289,6 +299,7 @@ function MyAppointments () {
         appointment={selectedAppointment}
         onClose={handleCloseCancelModal}
         onConfirm={handleCancelAppointment}
+        isSubmitting={isCancelling}
       />
     </>
   )

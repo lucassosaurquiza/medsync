@@ -95,9 +95,6 @@ function ReserveYourTurn () {
                 />
               </div>
 
-              <button className='reserve-turn__filter-button'>
-                ⚙ Filtros avanzados
-              </button>
             </div>
 
             <div className='reserve-turn__categories'>
@@ -201,9 +198,6 @@ function ReserveYourTurn () {
               ))}
             </div>
 
-            <button className='reserve-turn__load-more'>
-              Cargar más especialistas
-            </button>
           </section>
         </main>
       </MainLayout>

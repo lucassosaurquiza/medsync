@@ -22,69 +22,38 @@ function PatientRegisterForm () {
     }
 
     try {
-      const registerResponse = await fetch(
+      const response = await fetch(
         'http://localhost:3000/api/auth/register',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             name,
-            email,
             lastName,
-            password,
-            role: 'patient'
-          })
-        }
-      )
-
-      const registerData = await registerResponse.json()
-
-      if (!registerResponse.ok) {
-        toast.error(registerData.message)
-        return
-      }
-
-      await fetch('http://localhost:3000/api/patients', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: registerData.id,
-          phone: ''
-        })
-      })
-
-      const loginResponse = await fetch(
-        'http://localhost:3000/api/auth/login',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
             email,
-            password
+            password,
+            role: 'patient',
+            phone: '',
+            dni: ''
           })
         }
       )
 
-      const loginData = await loginResponse.json()
+      const data = await response.json()
 
-      if (!loginResponse.ok) {
-        toast.error(loginData.message)
+      if (!response.ok) {
+        toast.error(data.message)
         return
       }
 
-      localStorage.setItem('token', loginData.token)
-      localStorage.setItem('user', JSON.stringify(loginData.user))
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('user', JSON.stringify(data.user))
 
+      toast.success('Cuenta creada correctamente')
       navigate('/')
     } catch {
-      toast.error('Error al registrar paciente:')
+      toast.error('Error al registrar paciente')
     }
-
-    toast.success('Cuenta creada correctamente')
-
-    setTimeout(() => {
-      navigate('/')
-    }, 1000)
   }
 
   return (

@@ -1,0 +1,133 @@
+.patients-view {
+  width: 100%;
+}
+
+.patients-view__header {
+  margin-bottom: 28px;
+}
+
+.patients-view__eyebrow {
+  display: inline-block;
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.patients-view__header h1 {
+  color: #0f172a;
+  font-size: 34px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.patients-view__header p {
+  color: #64748b;
+  font-size: 15px;
+}
+
+.patients-view__grid {
+  display: grid;
+  gap: 16px;
+}
+
+.patient-card {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 18px;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.patient-card__avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background-color: #ecfdf5;
+  color: var(--color-primary);
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.patient-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.patient-card__header h2 {
+  color: #0f172a;
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.patient-card__header p {
+  color: #64748b;
+}
+
+.patient-card__status {
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.patient-card__status--active {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.patient-card__status--new {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.patient-card__details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.patient-card__button {
+  border: none;
+  background-color: var(--color-primary);
+  color: #fff;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .patients-view__header h1 {
+    font-size: 28px;
+  }
+
+  .patient-card {
+    grid-template-columns: 1fr;
+  }
+
+  .patient-card__header {
+    flex-direction: column;
+  }
+
+  .patient-card__button {
+    width: 100%;
+  }
+}

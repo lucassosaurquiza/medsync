@@ -1,31 +1,54 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken')
+const pool = require('../config/db')
 
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
+  const authHeader = req.headers.authorization
+
+  if (!authHeader?.startsWith('Bearer ')) {
+    return res.status(401).json({
+      message: 'Token no proporcionado'
+    })
+  }
+
+  const token = authHeader.split(' ')[1]
+
+  let decoded
+
   try {
-    const authHeader = req.headers.authorization;
+    decoded = jwt.verify(token, process.env.JWT_SECRET)
+  } catch {
+    return res.status(401).json({
+      message: 'Token inválido o vencido'
+    })
+  }
 
-    if (!authHeader) {
+  try {
+    const [users] = await pool.query(
+      `
+      SELECT id, role
+      FROM users
+      WHERE id = ?
+      LIMIT 1
+      `,
+      [decoded.id]
+    )
+
+    if (users.length === 0) {
       return res.status(401).json({
-        message: "Token no proporcionado"
-      });
+        message: 'La sesión ya no es válida'
+      })
     }
 
-    const token = authHeader.split(" ")[1];
+    req.user = users[0]
 
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET
-    );
-
-    req.user = decoded;
-
-    next();
-
+    next()
   } catch (error) {
-    return res.status(401).json({
-      message: "Token inválido"
-    });
-  }
-};
+    console.error('Error al validar la sesión:', error)
 
-module.exports = authMiddleware;
+    return res.status(500).json({
+      message: 'Error al validar la sesión'
+    })
+  }
+}
+
+module.exports = authMiddleware

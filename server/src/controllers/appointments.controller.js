@@ -3,17 +3,70 @@ const pool = require("../config/db");
 // CREAR TURNO
 
 const createAppointment = async (req, res) => {
-  const {
-    specialistId,
-    patientId,
-    date,
-    time,
-    healthInsurance,
-    reason
-  } = req.body
+  const { specialistId, date, time, healthInsurance, reason } = req.body
+
+  if (!specialistId || !date || !time) {
+    return res.status(400).json({
+      message: 'Especialista, fecha y horario son obligatorios'
+    })
+  }
+
+  let connection
+  let transactionStarted = false
 
   try {
-    const [result] = await pool.query(
+    connection = await pool.getConnection()
+    await connection.beginTransaction()
+    transactionStarted = true
+
+    const [patientRows] = await connection.query(
+      `
+      SELECT
+        patients.id,
+        users.name,
+        users.lastName
+      FROM patients
+      JOIN users ON patients.userId = users.id
+      WHERE patients.userId = ?
+      `,
+      [req.user.id]
+    )
+
+    if (patientRows.length === 0) {
+      await connection.rollback()
+      transactionStarted = false
+
+      return res.status(404).json({
+        message: 'Paciente no encontrado'
+      })
+    }
+
+    const [specialistRows] = await connection.query(
+      `
+      SELECT
+        specialists.userId,
+        users.name,
+        users.lastName
+      FROM specialists
+      JOIN users ON specialists.userId = users.id
+      WHERE specialists.id = ?
+      `,
+      [specialistId]
+    )
+
+    if (specialistRows.length === 0) {
+      await connection.rollback()
+      transactionStarted = false
+
+      return res.status(404).json({
+        message: 'Especialista no encontrado'
+      })
+    }
+
+    const patient = patientRows[0]
+    const specialist = specialistRows[0]
+
+    const [result] = await connection.query(
       `
       INSERT INTO appointments
       (
@@ -29,7 +82,7 @@ const createAppointment = async (req, res) => {
       `,
       [
         specialistId,
-        patientId,
+        patient.id,
         date,
         time,
         healthInsurance || null,
@@ -38,16 +91,52 @@ const createAppointment = async (req, res) => {
       ]
     )
 
+    const patientName = `${patient.name} ${patient.lastName}`
+
+    await connection.query(
+      `
+      INSERT INTO notifications
+      (
+        userId,
+        title,
+        message,
+        type
+      )
+      VALUES (?, ?, ?, ?)
+      `,
+      [
+        specialist.userId,
+        'Nueva solicitud de turno',
+        `${patientName} solicitó un turno para el ${date} a las ${time}.`,
+        'info'
+      ]
+    )
+
+    await connection.commit()
+    transactionStarted = false
+
     res.status(201).json({
       message: 'Turno creado',
       id: result.insertId
     })
   } catch (error) {
+    if (transactionStarted) {
+      await connection.rollback()
+    }
+
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(409).json({
+        message: 'Ese horario ya no está disponible'
+      })
+    }
+
     console.error('Error al crear turno:', error)
 
     res.status(500).json({
       message: 'Error al crear turno'
     })
+  } finally {
+    connection?.release()
   }
 }
 
@@ -180,15 +269,87 @@ const getMyAppointments = async (req, res) => {
   }
 }
 
+// TRAER LOS TURNOS DEL ESPECIALISTA
+
+const getSpecialistAppointments = async (req, res) => {
+  const userId = req.user.id
+
+
+  try {
+    const [specialistRows] = await pool.query(
+      `
+      SELECT id
+      FROM specialists
+      WHERE userId = ?
+      `,
+      [userId]
+    )
+
+    if (specialistRows.length === 0) {
+      return res.status(404).json({
+        message: 'Especialista no encontrado'
+      })
+    }
+
+    const specialistId = specialistRows[0].id
+
+    const [rows] = await pool.query(
+      `
+      SELECT
+        appointments.id,
+        DATE_FORMAT(appointments.date, '%Y-%m-%d') AS date,
+        TIME_FORMAT(appointments.time, '%H:%i') AS time,
+        appointments.status,
+        appointments.healthInsurance,
+        appointments.reason,
+        patients.dni,
+        patients.phone,
+        patient_user.name AS patientName,
+        patient_user.lastName AS patientLastName,
+        patient_user.email AS patientEmail
+      FROM appointments
+      JOIN patients ON appointments.patientId = patients.id
+      JOIN users AS patient_user ON patients.userId = patient_user.id
+      WHERE appointments.specialistId = ?
+      ORDER BY appointments.date ASC, appointments.time ASC
+      `,
+      [specialistId]
+    )
+
+    res.json(rows)
+    // Después de obtener turnos
+    console.log("TURNOS:", rows)
+  } catch (error) {
+    console.error('Error al obtener turnos del especialista:', error)
+
+    res.status(500).json({
+      message: 'Error al obtener turnos del especialista'
+    })
+  }
+
+}
+
 // ACTUALIZAR TURNO
 
 const updateAppointment = async (req, res) => {
   const { id } = req.params
-
   const { status } = req.body
 
+  const allowedStatuses = ['confirmed', 'cancelled']
+
+  if (!allowedStatuses.includes(status)) {
+    return res.status(400).json({
+      message: 'Estado de turno inválido'
+    })
+  }
+
+  let connection
+
   try {
-    const [appointmentRows] = await pool.query(
+    connection = await pool.getConnection()
+    await connection.beginTransaction()
+
+    const [appointmentRows] = await connection.query(
       `
       SELECT
         appointments.id,
@@ -203,11 +364,15 @@ const updateAppointment = async (req, res) => {
       JOIN specialists ON appointments.specialistId = specialists.id
       JOIN users AS specialist_user ON specialists.userId = specialist_user.id
       WHERE appointments.id = ?
+        AND specialists.userId = ?
+      FOR UPDATE
       `,
-      [id]
+      [id, req.user.id]
     )
 
     if (appointmentRows.length === 0) {
+      await connection.rollback()
+
       return res.status(404).json({
         message: 'Turno no encontrado'
       })
@@ -215,7 +380,15 @@ const updateAppointment = async (req, res) => {
 
     const appointment = appointmentRows[0]
 
-    const [result] = await pool.query(
+    if (appointment.status !== 'pending') {
+      await connection.rollback()
+
+      return res.status(409).json({
+        message: 'El turno ya fue procesado'
+      })
+    }
+
+    await connection.query(
       `
       UPDATE appointments
       SET status = ?
@@ -224,57 +397,52 @@ const updateAppointment = async (req, res) => {
       [status, id]
     )
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        message: 'Turno no encontrado'
-      })
-    }
+    const notificationTitle =
+      status === 'confirmed' ? 'Turno confirmado' : 'Turno cancelado'
 
-    if (status === 'confirmed' || status === 'cancelled') {
-      const notificationTitle =
-        status === 'confirmed'
-          ? 'Turno confirmado'
-          : 'Turno cancelado'
+    const notificationMessage =
+      status === 'confirmed'
+        ? `Tu turno con ${appointment.specialistName} ${appointment.specialistLastName} fue confirmado.`
+        : `Tu turno con ${appointment.specialistName} ${appointment.specialistLastName} fue cancelado.`
 
-      const notificationMessage =
-        status === 'confirmed'
-          ? `Tu turno con ${appointment.specialistName} ${appointment.specialistLastName} fue confirmado.`
-          : `Tu turno con ${appointment.specialistName} ${appointment.specialistLastName} fue cancelado.`
+    const notificationType = status === 'confirmed' ? 'success' : 'error'
 
-      const notificationType =
-        status === 'confirmed'
-          ? 'success'
-          : 'error'
-
-      await pool.query(
-        `
-        INSERT INTO notifications
-        (
-          userId,
-          title,
-          message,
-          type
-        )
-        VALUES (?, ?, ?, ?)
-        `,
-        [
-          appointment.patientUserId,
-          notificationTitle,
-          notificationMessage,
-          notificationType
-        ]
+    await connection.query(
+      `
+      INSERT INTO notifications
+      (
+        userId,
+        title,
+        message,
+        type
       )
-    }
+      VALUES (?, ?, ?, ?)
+      `,
+      [
+        appointment.patientUserId,
+        notificationTitle,
+        notificationMessage,
+        notificationType
+      ]
+    )
+
+    await connection.commit()
 
     res.json({
       message: 'Turno actualizado correctamente'
     })
   } catch (error) {
+    if (connection) {
+      await connection.rollback()
+    }
+
     console.error('Error al actualizar turno:', error)
 
     res.status(500).json({
       message: 'Error al actualizar turno'
     })
+  } finally {
+    connection?.release()
   }
 }
 
@@ -284,21 +452,39 @@ const cancelMyAppointment = async (req, res) => {
   const { id } = req.params
   const userId = req.user.id
 
+  let connection
+  let transactionStarted = false
+
   try {
-    const [appointmentRows] = await pool.query(
+    connection = await pool.getConnection()
+    await connection.beginTransaction()
+    transactionStarted = true
+
+    const [appointmentRows] = await connection.query(
       `
       SELECT
         appointments.id,
         appointments.status,
-        patients.userId
+        DATE_FORMAT(appointments.date, '%Y-%m-%d') AS date,
+        TIME_FORMAT(appointments.time, '%H:%i') AS time,
+        specialists.userId AS specialistUserId,
+        patient_user.name AS patientName,
+        patient_user.lastName AS patientLastName
       FROM appointments
       JOIN patients ON appointments.patientId = patients.id
+      JOIN users AS patient_user ON patients.userId = patient_user.id
+      JOIN specialists ON appointments.specialistId = specialists.id
       WHERE appointments.id = ?
+        AND patients.userId = ?
+      FOR UPDATE
       `,
-      [id]
+      [id, userId]
     )
 
     if (appointmentRows.length === 0) {
+      await connection.rollback()
+      transactionStarted = false
+
       return res.status(404).json({
         message: 'Turno no encontrado'
       })
@@ -306,19 +492,16 @@ const cancelMyAppointment = async (req, res) => {
 
     const appointment = appointmentRows[0]
 
-    if (appointment.userId !== userId) {
-      return res.status(403).json({
-        message: 'No tenés permiso para cancelar este turno'
-      })
-    }
-
     if (appointment.status === 'cancelled') {
-      return res.status(400).json({
+      await connection.rollback()
+      transactionStarted = false
+
+      return res.status(409).json({
         message: 'El turno ya está cancelado'
       })
     }
 
-    await pool.query(
+    await connection.query(
       `
       UPDATE appointments
       SET status = 'cancelled'
@@ -327,15 +510,46 @@ const cancelMyAppointment = async (req, res) => {
       [id]
     )
 
+    const patientName =
+      `${appointment.patientName} ${appointment.patientLastName}`
+
+    await connection.query(
+      `
+      INSERT INTO notifications
+      (
+        userId,
+        title,
+        message,
+        type
+      )
+      VALUES (?, ?, ?, ?)
+      `,
+      [
+        appointment.specialistUserId,
+        'Turno cancelado por el paciente',
+        `${patientName} canceló el turno del ${appointment.date} a las ${appointment.time}.`,
+        'warning'
+      ]
+    )
+
+    await connection.commit()
+    transactionStarted = false
+
     res.json({
       message: 'Turno cancelado correctamente'
     })
   } catch (error) {
+    if (transactionStarted) {
+      await connection.rollback()
+    }
+
     console.error('Error al cancelar turno:', error)
 
     res.status(500).json({
       message: 'Error al cancelar turno'
     })
+  } finally {
+    connection?.release()
   }
 }
 
@@ -376,5 +590,6 @@ module.exports = {
   updateAppointment,
   deleteAppointment,
   getMyAppointments,
-  cancelMyAppointment
+  cancelMyAppointment,
+  getSpecialistAppointments
 };

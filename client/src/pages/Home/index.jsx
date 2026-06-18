@@ -5,7 +5,6 @@ import { Bell, CalendarClock, Clock, Crown } from 'lucide-react'
 import { Header } from '../../components/Header'
 import { MainLayout } from '../../layouts/MainLayout'
 import { StartButton } from '../../components/StartButton'
-import { AdviceButton } from '../../components/AdviceButton'
 import { BenefitCard } from '../../components/BenefitCard'
 import { TestimonialCarousel } from '../../components/TestimonialCarousel'
 import { Footer } from '../../components/Footer'
@@ -34,7 +33,6 @@ function Home () {
 
             <div className='hero__actions'>
               <StartButton />
-              <AdviceButton />
             </div>
           </div>
           <img className='hero__img' src={home} alt='' />

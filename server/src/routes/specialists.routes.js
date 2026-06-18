@@ -1,23 +1,19 @@
 const express = require("express");
 const router = express.Router();
 
+const authMiddleware = require('../middlewares/auth.middleware')
+const roleMiddleware = require('../middlewares/role.middleware')
 
 const {
-  createSpecialist,
   getSpecialists,
   getSpecialistsById,
-  deleteSpecialist,
-  updateSpecialist
+  getMyProfile,
+  updateMyProfile
 } = require("../controllers/specialists.controller");
 
-
-router.post("/", createSpecialist);
-
 router.get("/", getSpecialists);
+router.get('/me', authMiddleware, roleMiddleware('specialist'), getMyProfile)
+router.put('/me', authMiddleware, roleMiddleware('specialist'), updateMyProfile)
 router.get("/:id", getSpecialistsById);
-
-router.put("/:id", updateSpecialist);
-
-router.delete("/:id", deleteSpecialist)
 
 module.exports = router;

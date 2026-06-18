@@ -164,6 +164,164 @@ const getSpecialistsById = async (req, res) => {
   }
 }
 
+// OBTENER PERFIL DEL ESPECIALISTA AUTENTICADO
+
+const getMyProfile = async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      `
+      SELECT
+        users.name,
+        users.lastName,
+        users.email,
+        specialists.specialty,
+        specialists.professionalLicense,
+        specialists.workplace,
+        specialists.avatarUrl,
+        specialists.price
+      FROM specialists
+      INNER JOIN users ON users.id = specialists.userId
+      WHERE specialists.userId = ?
+      LIMIT 1
+      `,
+      [req.user.id]
+    )
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        message: 'Perfil de especialista no encontrado'
+      })
+    }
+
+    res.json(rows[0])
+  } catch (error) {
+    console.error('Error al obtener el perfil profesional:', error)
+
+    res.status(500).json({
+      message: 'Error al obtener el perfil profesional'
+    })
+  }
+}
+
+// ACTUALIZAR PERFIL DEL ESPECIALISTA AUTENTICADO
+
+const updateMyProfile = async (req, res) => {
+  const {
+    name,
+    lastName,
+    specialty,
+    workplace,
+    avatarUrl,
+    price
+  } = req.body
+
+  if (
+    typeof name !== 'string' ||
+    !name.trim() ||
+    typeof lastName !== 'string' ||
+    !lastName.trim() ||
+    typeof specialty !== 'string' ||
+    !specialty.trim() ||
+    typeof workplace !== 'string' ||
+    !workplace.trim()
+  ) {
+    return res.status(400).json({
+      message: 'Nombre, apellido, especialidad y consultorio son obligatorios'
+    })
+  }
+
+  const normalizedPrice = Number(price)
+
+  if (!Number.isFinite(normalizedPrice) || normalizedPrice < 0) {
+    return res.status(400).json({
+      message: 'El precio de consulta no es valido'
+    })
+  }
+
+  let connection
+  let transactionStarted = false
+
+  try {
+    connection = await pool.getConnection()
+    await connection.beginTransaction()
+    transactionStarted = true
+
+    const [profiles] = await connection.query(
+      `
+      SELECT id
+      FROM specialists
+      WHERE userId = ?
+      FOR UPDATE
+      `,
+      [req.user.id]
+    )
+
+    if (profiles.length === 0) {
+      await connection.rollback()
+      transactionStarted = false
+
+      return res.status(404).json({
+        message: 'Perfil de especialista no encontrado'
+      })
+    }
+
+    await connection.query(
+      `
+      UPDATE users
+      SET name = ?, lastName = ?
+      WHERE id = ?
+      `,
+      [name.trim(), lastName.trim(), req.user.id]
+    )
+
+    await connection.query(
+      `
+      UPDATE specialists
+      SET
+        specialty = ?,
+        workplace = ?,
+        avatarUrl = ?,
+        price = ?
+      WHERE userId = ?
+      `,
+      [
+        specialty.trim(),
+        workplace.trim(),
+        typeof avatarUrl === 'string' ? avatarUrl.trim() : '',
+        normalizedPrice,
+        req.user.id
+      ]
+    )
+
+    await connection.commit()
+    transactionStarted = false
+
+    res.json({
+      message: 'Perfil profesional actualizado correctamente',
+      profile: {
+        name: name.trim(),
+        lastName: lastName.trim(),
+        specialty: specialty.trim(),
+        workplace: workplace.trim(),
+        avatarUrl: typeof avatarUrl === 'string' ? avatarUrl.trim() : '',
+        price: normalizedPrice
+      }
+    })
+  } catch (error) {
+    if (transactionStarted) {
+      await connection.rollback()
+    }
+
+    console.error('Error al actualizar el perfil profesional:', error)
+
+    res.status(500).json({
+      message: 'Error al actualizar el perfil profesional'
+    })
+  } finally {
+    connection?.release()
+  }
+}
+
 // ACTUALIZAR ESPECIALISTA
 const updateSpecialist = async (req, res) => {
   const { id } = req.params
@@ -248,6 +406,8 @@ module.exports = {
   createSpecialist,
   getSpecialists,
   getSpecialistsById,
+  getMyProfile,
+  updateMyProfile,
   updateSpecialist,
   deleteSpecialist
 }

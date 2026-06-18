@@ -1,9 +1,10 @@
 import './styles.css'
+import { Link } from 'react-router-dom'
 
 function ButtonChoosePlan () {
   return (
     <>
-      <button className='choose-plan'>Elegir Plan</button>
+      <Link className='choose-plan' to='/register'>Crear cuenta</Link>
     </>
   )
 }

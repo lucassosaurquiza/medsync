@@ -4,31 +4,193 @@ const jwt = require("jsonwebtoken")
 
 // REGISTRAR USUARIO
 const register = async (req, res) => {
-  const { name, lastName, email, password, role } = req.body;
+  const {
+    name,
+    lastName,
+    email,
+    password,
+    role,
+    phone,
+    dni,
+    specialty,
+    professionalLicense,
+    workplace,
+    avatarUrl,
+    price
+  } = req.body
+
+  const allowedRoles = ['patient', 'specialist']
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const normalizeOptionalString = value =>
+    typeof value === 'string' && value.trim() ? value.trim() : null
+
+  if (
+    typeof name !== 'string' ||
+    !name.trim() ||
+    typeof lastName !== 'string' ||
+    !lastName.trim() ||
+    typeof email !== 'string' ||
+    !email.trim() ||
+    typeof password !== 'string'
+  ) {
+    return res.status(400).json({
+      message: 'Nombre, apellido, email y contraseña son obligatorios'
+    })
+  }
+
+  if (password.length < 8) {
+    return res.status(400).json({
+      message: 'La contraseña debe tener al menos 8 caracteres'
+    })
+  }
+
+  if (!emailPattern.test(email.trim())) {
+    return res.status(400).json({
+      message: 'El formato del email no es válido'
+    })
+  }
+
+  if (!allowedRoles.includes(role)) {
+    return res.status(400).json({
+      message: 'Tipo de cuenta inválido'
+    })
+  }
+
+  if (
+    role === 'specialist' &&
+    (typeof specialty !== 'string' ||
+      !specialty.trim() ||
+      typeof professionalLicense !== 'string' ||
+      !professionalLicense.trim())
+  ) {
+    return res.status(400).json({
+      message: 'Especialidad y matrícula profesional son obligatorias'
+    })
+  }
+
+  const normalizedEmail = email.trim().toLowerCase()
+  const normalizedPrice = Number(price || 0)
+
+  if (!Number.isFinite(normalizedPrice) || normalizedPrice < 0) {
+    return res.status(400).json({
+      message: 'El precio de consulta no es válido'
+    })
+  }
+
+  let connection
+  let transactionStarted = false
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10)
 
-    const [result] = await pool.query(
+    connection = await pool.getConnection()
+    await connection.beginTransaction()
+    transactionStarted = true
+
+    const [userResult] = await connection.query(
       `
       INSERT INTO users (name, lastName, email, password, role)
       VALUES (?, ?, ?, ?, ?)
       `,
-      [name, lastName, email, hashedPassword, role]
-    );
+      [
+        name.trim(),
+        lastName.trim(),
+        normalizedEmail,
+        hashedPassword,
+        role
+      ]
+    )
 
-    res.status(201).json({
-      message: "Usuario registrado correctamente",
-      id: result.insertId
-    });
+    const userId = userResult.insertId
+    let profileId
+
+    if (role === 'patient') {
+      const [profileResult] = await connection.query(
+        `
+        INSERT INTO patients (userId, dni, phone)
+        VALUES (?, ?, ?)
+        `,
+        [
+          userId,
+          normalizeOptionalString(dni),
+          normalizeOptionalString(phone)
+        ]
+      )
+
+      profileId = profileResult.insertId
+    } else {
+      const [profileResult] = await connection.query(
+        `
+        INSERT INTO specialists
+        (
+          userId,
+          specialty,
+          professionalLicense,
+          workplace,
+          avatarUrl,
+          price,
+          rating
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        `,
+        [
+          userId,
+          specialty.trim(),
+          professionalLicense.trim(),
+          normalizeOptionalString(workplace) || 'Consultorio a definir',
+          normalizeOptionalString(avatarUrl) || '',
+          normalizedPrice,
+          0
+        ]
+      )
+
+      profileId = profileResult.insertId
+    }
+
+    const token = jwt.sign(
+      {
+        id: userId,
+        role
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '1d'
+      }
+    )
+
+    await connection.commit()
+    transactionStarted = false
+
+    return res.status(201).json({
+      message: 'Cuenta creada correctamente',
+      token,
+      user: {
+        id: userId,
+        name: name.trim(),
+        lastName: lastName.trim(),
+        email: normalizedEmail,
+        role
+      },
+      profileId
+    })
   } catch (error) {
-    console.error("Error al registrar usuario:", error);
+    if (transactionStarted) {
+      await connection.rollback()
+    }
 
     if (error.code === 'ER_DUP_ENTRY') {
-      return res.status(500).json({
+      return res.status(409).json({
         message: 'El email ya está registrado'
       })
     }
+
+    console.error('Error al registrar usuario:', error)
+
+    return res.status(500).json({
+      message: 'Error al crear la cuenta'
+    })
+  } finally {
+    connection?.release()
   }
 };
 

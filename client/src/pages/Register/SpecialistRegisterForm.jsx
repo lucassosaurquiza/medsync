@@ -15,98 +15,61 @@ function SpecialistRegisterForm () {
   const [specialty, setSpecialty] = useState('')
   const [license, setLicense] = useState('')
 
- const handleSubmit = async event => {
-  event.preventDefault()
+  const handleSubmit = async event => {
+    event.preventDefault()
 
-  if (password !== confirmedPassword) {
-    toast.error('Las contraseñas no coinciden')
-    return
-  }
-
-  if (!specialty || specialty === 'Selecciona tu especialidad') {
-    toast.error('Seleccioná una especialidad')
-    return
-  }
-
-  if (!license.trim()) {
-    toast.error('Ingresá tu matrícula profesional')
-    return
-  }
-
-  try {
-    const registerResponse = await fetch(
-      'http://localhost:3000/api/auth/register',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          lastName,
-          email,
-          password,
-          role: 'specialist'
-        })
-      }
-    )
-
-    const registerData = await registerResponse.json()
-
-    if (!registerResponse.ok) {
-      toast.error(registerData.message)
+    if (password !== confirmedPassword) {
+      toast.error('Las contraseñas no coinciden')
       return
     }
 
-    const specialistResponse = await fetch(
-      'http://localhost:3000/api/specialists',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: registerData.id,
-          specialty,
-          workplace: 'Consultorio a definir',
-          avatarUrl: '',
-          price: 0,
-          rating: 0
-        })
-      }
-    )
-
-    const specialistData = await specialistResponse.json()
-
-    if (!specialistResponse.ok) {
-      toast.error(specialistData.message)
+    if (!specialty || specialty === 'Selecciona tu especialidad') {
+      toast.error('Seleccioná una especialidad')
       return
     }
 
-    const loginResponse = await fetch(
-      'http://localhost:3000/api/auth/login',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          password
-        })
-      }
-    )
-
-    const loginData = await loginResponse.json()
-
-    if (!loginResponse.ok) {
-      toast.error(loginData.message)
+    if (!license.trim()) {
+      toast.error('Ingresá tu matrícula profesional')
       return
     }
 
-    localStorage.setItem('token', loginData.token)
-    localStorage.setItem('user', JSON.stringify(loginData.user))
+    try {
+      const response = await fetch(
+        'http://localhost:3000/api/auth/register',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            lastName,
+            email,
+            password,
+            role: 'specialist',
+            specialty,
+            professionalLicense: license,
+            workplace: 'Consultorio a definir',
+            avatarUrl: '',
+            price: 0
+          })
+        }
+      )
 
-    toast.success('Bienvenido a tu dashboard')
-    navigate('/dashboard')
-  } catch {
-    toast.error('Error al registrar especialista')
+      const data = await response.json()
+
+      if (!response.ok) {
+        toast.error(data.message)
+        return
+      }
+
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('user', JSON.stringify(data.user))
+
+      toast.success('Bienvenido a tu dashboard')
+      navigate('/dashboard')
+    } catch {
+      toast.error('Error al registrar especialista')
+    }
   }
-}
 
   return (
     <form className='register-form' onSubmit={handleSubmit}>

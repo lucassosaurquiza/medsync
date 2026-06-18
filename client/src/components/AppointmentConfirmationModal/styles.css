@@ -166,6 +166,7 @@
   align-items: center;
   gap: 8px;
   border: none;
+  text-decoration: none;
 }
 
 .appointment-modal__button--primary {

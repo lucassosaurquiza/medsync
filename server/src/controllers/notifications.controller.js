@@ -32,14 +32,21 @@ const markAsRead = async (req, res) => {
   const { id } = req.params
 
   try {
-    await pool.query(
+    const [result] = await pool.query(
       `
       UPDATE notifications
       SET isRead = TRUE
       WHERE id = ?
+        AND userId = ?
       `,
-      [id]
+      [id, req.user.id]
     )
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: 'Notificación no encontrada'
+      })
+    }
 
     res.json({
       message: 'Notificación actualizada'

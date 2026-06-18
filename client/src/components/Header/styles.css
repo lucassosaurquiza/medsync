@@ -35,7 +35,8 @@
 
 .header-nav__home,
 .header-nav__turn,
-.header-nav__appointments {
+.header-nav__appointments,
+.header-nav__dashboard {
   color: var(--color-secondary);
   font-size: 1.2rem;
   font-weight: 500;
@@ -44,13 +45,15 @@
 
 .header-nav__home:hover,
 .header-nav__turn:hover,
-.header-nav__appointments:hover {
+.header-nav__appointments:hover,
+.header-nav__dashboard:hover {
   color: var(--color-primary);
 }
 
 .header-nav__home::after,
 .header-nav__turn::after,
-.header-nav__appointments::after {
+.header-nav__appointments::after,
+.header-nav__dashboard::after {
   content: "";
   position: absolute;
   left: 0;
@@ -63,7 +66,8 @@
 
 .header-nav__home:hover::after,
 .header-nav__turn:hover::after,
-.header-nav__appointments:hover::after {
+.header-nav__appointments:hover::after,
+.header-nav__dashboard:hover::after {
   width: 100%;
 }
 
@@ -187,8 +191,10 @@
 }
 
 .notifications-dropdown__list {
-  max-height: 320px;
+  max-height: 280px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
 }
 
 .notification-item {
@@ -274,6 +280,31 @@
 }
 
 @media (max-width: 799px) {
+  .header-nav--open {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+    padding: 20px;
+    background-color: #fff;
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 16px 30px rgba(15, 23, 42, 0.14);
+  }
+
+  .header-nav--open > a {
+    text-align: center;
+  }
+
+  .header-nav--open .header-user {
+    justify-content: center;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+  }
+
   .notifications-dropdown {
     right: -80px;
     width: 300px;
