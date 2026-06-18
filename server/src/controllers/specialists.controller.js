@@ -72,6 +72,7 @@ const getSpecialists = async (req, res) => {
       users.name,
       users.lastName,
       specialists.specialty,
+      specialists.professionalLicense,
       specialists.workplace,
       specialists.avatarUrl,
       specialists.price,
@@ -137,6 +138,7 @@ const getSpecialistsById = async (req, res) => {
         users.name,
         users.lastName,
         specialists.specialty,
+        specialists.professionalLicense,
         specialists.workplace,
         specialists.avatarUrl,
         specialists.price,
@@ -210,6 +212,7 @@ const updateMyProfile = async (req, res) => {
     name,
     lastName,
     specialty,
+    professionalLicense,
     workplace,
     avatarUrl,
     price
@@ -222,11 +225,14 @@ const updateMyProfile = async (req, res) => {
     !lastName.trim() ||
     typeof specialty !== 'string' ||
     !specialty.trim() ||
+    typeof professionalLicense !== 'string' ||
+    !professionalLicense.trim() ||
     typeof workplace !== 'string' ||
     !workplace.trim()
   ) {
     return res.status(400).json({
-      message: 'Nombre, apellido, especialidad y consultorio son obligatorios'
+      message:
+        'Nombre, apellido, especialidad, matricula y consultorio son obligatorios'
     })
   }
 
@@ -279,6 +285,7 @@ const updateMyProfile = async (req, res) => {
       UPDATE specialists
       SET
         specialty = ?,
+        professionalLicense = ?,
         workplace = ?,
         avatarUrl = ?,
         price = ?
@@ -286,6 +293,7 @@ const updateMyProfile = async (req, res) => {
       `,
       [
         specialty.trim(),
+        professionalLicense.trim(),
         workplace.trim(),
         typeof avatarUrl === 'string' ? avatarUrl.trim() : '',
         normalizedPrice,
@@ -302,6 +310,7 @@ const updateMyProfile = async (req, res) => {
         name: name.trim(),
         lastName: lastName.trim(),
         specialty: specialty.trim(),
+        professionalLicense: professionalLicense.trim(),
         workplace: workplace.trim(),
         avatarUrl: typeof avatarUrl === 'string' ? avatarUrl.trim() : '',
         price: normalizedPrice

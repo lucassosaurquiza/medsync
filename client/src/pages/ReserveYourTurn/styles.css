@@ -145,7 +145,7 @@
 }
 
 .specialist-card__specialty {
-  margin-bottom: 16px;
+  margin-bottom: 4px;
   color: #007f5f;
   font-size: 13px;
   font-weight: 700;
@@ -205,4 +205,11 @@
   .reserve-turn__grid {
     grid-template-columns: 1fr;
   }
+}
+
+.specialist-card__license {
+  margin-bottom: 16px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
 }

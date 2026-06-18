@@ -9,6 +9,7 @@ const emptyProfile = {
   name: '',
   lastName: '',
   specialty: '',
+  professionalLicense: '',
   workplace: '',
   price: '',
   avatarUrl: ''
@@ -42,6 +43,7 @@ function SettingsView () {
           name: data.name || '',
           lastName: data.lastName || '',
           specialty: data.specialty || '',
+          professionalLicense: data.professionalLicense || '',
           workplace: data.workplace || '',
           price: data.price ?? '',
           avatarUrl: data.avatarUrl || ''
@@ -174,6 +176,17 @@ function SettingsView () {
               name='specialty'
               type='text'
               value={profile.specialty}
+              onChange={handleChange}
+              required
+            />
+          </label>
+
+          <label>
+            Matrícula profesional
+            <input
+              name='professionalLicense'
+              type='text'
+              value={profile.professionalLicense}
               onChange={handleChange}
               required
             />

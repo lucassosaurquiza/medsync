@@ -160,9 +160,6 @@ function ReserveYourTurn () {
                       }
                       alt={`${specialist.name} ${specialist.lastName}`}
                     />
-                    <span className='specialist-card__rating'>
-                      ⭐ {specialist.rating || '4.8'}
-                    </span>
                   </div>
 
                   <div className='specialist-card__content'>
@@ -172,6 +169,10 @@ function ReserveYourTurn () {
 
                     <p className='specialist-card__specialty'>
                       {specialist.specialty}
+                    </p>
+
+                    <p className='specialist-card__license'>
+                      Matrícula {specialist.professionalLicense}
                     </p>
 
                     <div className='specialist-card__location'>
