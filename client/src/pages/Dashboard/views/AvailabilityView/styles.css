@@ -1,0 +1,476 @@
+.availability-view {
+  width: 100%;
+}
+
+.availability-view__status {
+  color: #64748b;
+  font-size: 15px;
+}
+
+.availability-view__header {
+  margin-bottom: 28px;
+  padding-right: 48px;
+}
+
+.availability-view__eyebrow {
+  display: inline-block;
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.availability-view__header h1 {
+  color: #0f172a;
+  font-size: 34px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.availability-view__header p {
+  color: #64748b;
+  font-size: 15px;
+}
+
+.availability-form {
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.availability-form__duration {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.availability-form__duration h2 {
+  color: #0f172a;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.availability-form__duration p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.availability-form__duration label,
+.availability-day__times label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.availability-form__duration input,
+.availability-day__times input {
+  height: 42px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #0f172a;
+  background-color: #fff;
+  font: inherit;
+  font-size: 14px;
+}
+
+.availability-form__duration input {
+  width: 112px;
+}
+
+.availability-form__duration input:focus,
+.availability-day__times input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 128, 96, 0.12);
+}
+
+.availability-form__days {
+  padding: 0 24px;
+}
+
+.availability-day {
+  min-height: 78px;
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(280px, 1fr);
+  align-items: center;
+  gap: 24px;
+  border-bottom: 1px solid #e2e8f0;
+  opacity: 0.62;
+}
+
+.availability-day--enabled {
+  opacity: 1;
+}
+
+.availability-day__toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.availability-day__toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+}
+
+.availability-day__times {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.availability-day__times input:disabled {
+  background-color: #f1f5f9;
+  cursor: not-allowed;
+}
+
+.availability-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 22px 24px;
+}
+
+.availability-form__primary,
+.availability-form__secondary {
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.availability-form__primary {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
+.availability-form__secondary {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
+.availability-form__primary:disabled,
+.availability-form__secondary:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.blocks-section {
+  margin-top: 36px;
+}
+
+.blocks-section__header {
+  margin-bottom: 16px;
+}
+
+.blocks-section__header h2 {
+  color: #0f172a;
+  font-size: 22px;
+  margin-bottom: 5px;
+}
+
+.blocks-section__header p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.block-form {
+  display: grid;
+  grid-template-columns: minmax(145px, 0.7fr) minmax(240px, 1fr) minmax(210px, 1fr) minmax(190px, 1fr) auto;
+  align-items: end;
+  gap: 16px;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.block-form__field,
+.block-form__type {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.block-form__type {
+  padding: 0;
+  border: none;
+}
+
+.block-form__type legend {
+  margin-bottom: 7px;
+}
+
+.block-form__field input {
+  width: 100%;
+  height: 42px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #0f172a;
+  background-color: #fff;
+  font-size: 14px;
+}
+
+.block-form__field input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 128, 96, 0.12);
+}
+
+.block-form__segments {
+  height: 42px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.block-form__segment {
+  border: none;
+  background-color: #fff;
+  color: #475569;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.block-form__segment + .block-form__segment {
+  border-left: 1px solid #cbd5e1;
+}
+
+.block-form__segment--active {
+  background-color: #ecfdf5;
+  color: var(--color-primary);
+}
+
+.block-form__times {
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.block-form__reason {
+  grid-column: auto;
+}
+
+.block-form__submit {
+  min-height: 42px;
+  border: none;
+  border-radius: 8px;
+  padding: 0 18px;
+  background-color: var(--color-primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.block-form__submit:disabled,
+.block-form__segment:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.blocks-list {
+  margin-top: 14px;
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.blocks-list__status,
+.blocks-list__empty {
+  padding: 24px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.blocks-list__empty {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.blocks-list__empty strong {
+  color: #0f172a;
+  font-size: 15px;
+}
+
+.block-item {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.block-item:last-child {
+  border-bottom: none;
+}
+
+.block-item__details {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(130px, auto) minmax(120px, auto) 1fr;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+.block-item__details strong {
+  color: #0f172a;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+.block-item__details span,
+.block-item__details p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.block-item__details p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.block-item__delete {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 8px;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  cursor: pointer;
+}
+
+.block-item__delete:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+@media (max-width: 1100px) {
+  .block-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .block-form__submit {
+    width: 100%;
+  }
+
+  .block-form__times {
+    min-height: 0;
+  }
+
+  .block-form__times:empty {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .availability-view__header h1 {
+    font-size: 28px;
+  }
+
+  .availability-form__duration {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .availability-form__duration label,
+  .availability-form__duration input {
+    width: 100%;
+  }
+
+  .availability-day {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 18px 0;
+  }
+
+  .availability-form__actions {
+    flex-direction: column;
+  }
+
+  .availability-form__primary,
+  .availability-form__secondary {
+    width: 100%;
+  }
+
+  .block-form {
+    grid-template-columns: 1fr;
+  }
+
+  .block-item__details {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .block-item__details p {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 480px) {
+  .availability-form__duration,
+  .availability-form__days,
+  .availability-form__actions {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .availability-day__times {
+    grid-template-columns: 1fr;
+  }
+
+  .block-form {
+    padding: 16px;
+  }
+
+  .block-form__segments,
+  .block-form__times {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .block-form__segment {
+    min-height: 42px;
+  }
+
+  .block-form__segment + .block-form__segment {
+    border-top: 1px solid #cbd5e1;
+    border-left: none;
+  }
+}

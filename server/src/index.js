@@ -10,6 +10,8 @@ const specialistsRoutes = require("./routes/specialists.routes");
 const patientsRoutes = require("./routes/patients.routes");
 const authRoutes = require("./routes/auth.routes")
 const notificationsRoutes = require('./routes/notifications.routes')
+const availabilityRoutes = require('./routes/availability.routes')
+const blocksRoutes = require('./routes/blocks.routes')
 
 // APP
 const app = express();
@@ -31,6 +33,8 @@ app.use("/api/specialists", specialistsRoutes);
 app.use("/api/patients", patientsRoutes);
 app.use("/api/auth", authRoutes);
 app.use('/api/notifications', notificationsRoutes)
+app.use('/api/availability', availabilityRoutes)
+app.use('/api/blocks', blocksRoutes)
 
 
 // TEST MYSQL

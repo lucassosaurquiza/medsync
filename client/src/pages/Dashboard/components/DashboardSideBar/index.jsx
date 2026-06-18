@@ -2,6 +2,7 @@ import './styles.css'
 
 import {
   CalendarDays,
+  Clock3,
   LogOut,
   Menu,
   Settings,
@@ -76,6 +77,19 @@ function DashboardSidebar ({ activeView, setActiveView }) {
           >
             <CalendarDays size={18} />
             Turnos
+          </button>
+
+          <button
+            className={
+              activeView === 'availability'
+                ? 'dashboard-sidebar__link dashboard-sidebar__link--active'
+                : 'dashboard-sidebar__link'
+            }
+            type='button'
+            onClick={() => handleChangeView('availability')}
+          >
+            <Clock3 size={18} />
+            Disponibilidad
           </button>
 
           <button

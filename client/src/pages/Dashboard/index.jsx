@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { AppointmentsView } from './views/AppointmentsView'
 import { DashboardSidebar } from './components/DashboardSideBar'
 import { SettingsView } from './views/SettingsView'
+import { AvailabilityView } from './views/AvailabilityView'
 import { NotificationBell } from '../../components/NotificationBell'
 
 function Dashboard () {
@@ -22,6 +23,7 @@ function Dashboard () {
         </div>
 
         {activeView === 'appointments' && <AppointmentsView />}
+        {activeView === 'availability' && <AvailabilityView />}
         {activeView === 'settings' && <SettingsView />}
       </section>
     </main>

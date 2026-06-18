@@ -1,11 +1,23 @@
 const pool = require("../config/db");
+const {
+  AvailabilityError,
+  getAvailabilityForDate,
+  normalizeTime
+} = require('../services/availability.service')
 
 // CREAR TURNO
 
 const createAppointment = async (req, res) => {
   const { specialistId, date, time, healthInsurance, reason } = req.body
+  const normalizedSpecialistId = Number(specialistId)
+  const normalizedTime = normalizeTime(time)
 
-  if (!specialistId || !date || !time) {
+  if (
+    !Number.isInteger(normalizedSpecialistId) ||
+    normalizedSpecialistId <= 0 ||
+    !date ||
+    !normalizedTime
+  ) {
     return res.status(400).json({
       message: 'Especialista, fecha y horario son obligatorios'
     })
@@ -50,8 +62,9 @@ const createAppointment = async (req, res) => {
       FROM specialists
       JOIN users ON specialists.userId = users.id
       WHERE specialists.id = ?
+      FOR UPDATE
       `,
-      [specialistId]
+      [normalizedSpecialistId]
     )
 
     if (specialistRows.length === 0) {
@@ -65,6 +78,40 @@ const createAppointment = async (req, res) => {
 
     const patient = patientRows[0]
     const specialist = specialistRows[0]
+
+    let availability
+
+    try {
+      availability = await getAvailabilityForDate(
+        connection,
+        normalizedSpecialistId,
+        date
+      )
+    } catch (error) {
+      if (error instanceof AvailabilityError) {
+        await connection.rollback()
+        transactionStarted = false
+
+        return res.status(error.statusCode).json({
+          message: error.message
+        })
+      }
+
+      throw error
+    }
+
+    const selectedSlot = availability.slots.find(slot => (
+      slot.time === normalizedTime
+    ))
+
+    if (!selectedSlot?.available) {
+      await connection.rollback()
+      transactionStarted = false
+
+      return res.status(409).json({
+        message: 'Ese horario no esta disponible'
+      })
+    }
 
     const [result] = await connection.query(
       `
@@ -81,10 +128,10 @@ const createAppointment = async (req, res) => {
       VALUES (?, ?, ?, ?, ?, ?, ?)
       `,
       [
-        specialistId,
+        normalizedSpecialistId,
         patient.id,
         date,
-        time,
+        normalizedTime,
         healthInsurance || null,
         reason || null,
         'pending'
@@ -107,7 +154,7 @@ const createAppointment = async (req, res) => {
       [
         specialist.userId,
         'Nueva solicitud de turno',
-        `${patientName} solicitó un turno para el ${date} a las ${time}.`,
+        `${patientName} solicitó un turno para el ${date} a las ${normalizedTime}.`,
         'info'
       ]
     )
