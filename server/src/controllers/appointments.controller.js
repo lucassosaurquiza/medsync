@@ -1,6 +1,7 @@
 const pool = require("../config/db");
 const {
   AvailabilityError,
+  getArgentinaNow,
   getAvailabilityForDate,
   normalizeTime
 } = require('../services/availability.service')
@@ -376,6 +377,63 @@ const getSpecialistAppointments = async (req, res) => {
 
 }
 
+const getSpecialistAgenda = async (req, res) => {
+  const userId = req.user.id
+  const today = getArgentinaNow().date
+
+  try {
+    const [specialistRows] = await pool.query(
+      `
+      SELECT id
+      FROM specialists
+      WHERE userId = ?
+      `,
+      [userId]
+    )
+
+    if (specialistRows.length === 0) {
+      return res.status(404).json({
+        message: 'Especialista no encontrado'
+      })
+    }
+
+    const [appointments] = await pool.query(
+      `
+      SELECT
+        appointments.id,
+        DATE_FORMAT(appointments.date, '%Y-%m-%d') AS date,
+        TIME_FORMAT(appointments.time, '%H:%i') AS time,
+        appointments.status,
+        appointments.healthInsurance,
+        appointments.reason,
+        patients.dni,
+        patients.phone,
+        patient_user.name AS patientName,
+        patient_user.lastName AS patientLastName
+      FROM appointments
+      JOIN patients ON appointments.patientId = patients.id
+      JOIN users AS patient_user ON patients.userId = patient_user.id
+      WHERE appointments.specialistId = ?
+        AND appointments.date >= ?
+        AND appointments.status IN ('pending', 'confirmed')
+      ORDER BY appointments.date ASC, appointments.time ASC
+      `,
+      [specialistRows[0].id, today]
+    )
+
+    res.json({
+      today,
+      appointments
+    })
+  } catch (error) {
+    console.error('Error al obtener la agenda del especialista:', error)
+
+    res.status(500).json({
+      message: 'Error al obtener la agenda del especialista'
+    })
+  }
+}
+
 // ACTUALIZAR TURNO
 
 const updateAppointment = async (req, res) => {
@@ -638,5 +696,6 @@ module.exports = {
   deleteAppointment,
   getMyAppointments,
   cancelMyAppointment,
-  getSpecialistAppointments
+  getSpecialistAppointments,
+  getSpecialistAgenda
 };

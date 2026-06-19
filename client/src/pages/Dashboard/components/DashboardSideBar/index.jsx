@@ -3,6 +3,7 @@ import './styles.css'
 import {
   CalendarDays,
   Clock3,
+  LayoutDashboard,
   LogOut,
   Menu,
   Settings,
@@ -66,6 +67,19 @@ function DashboardSidebar ({ activeView, setActiveView }) {
         </div>
 
         <nav className='dashboard-sidebar__nav'>
+          <button
+            className={
+              activeView === 'agenda'
+                ? 'dashboard-sidebar__link dashboard-sidebar__link--active'
+                : 'dashboard-sidebar__link'
+            }
+            type='button'
+            onClick={() => handleChangeView('agenda')}
+          >
+            <LayoutDashboard size={18} />
+            Agenda
+          </button>
+
           <button
             className={
               activeView === 'appointments'

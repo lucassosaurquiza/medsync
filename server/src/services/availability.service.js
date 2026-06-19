@@ -192,6 +192,7 @@ const getAvailabilityForDate = async (db, specialistId, date) => {
 
 module.exports = {
   AvailabilityError,
+  getArgentinaNow,
   getAvailabilityForDate,
   normalizeTime
 }
