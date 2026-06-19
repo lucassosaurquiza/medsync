@@ -1,21 +1,40 @@
 import './styles.css'
-import kinesiologoImg from '../../assets/kinesiologo.png'
 
-function SpecialistProfile () {
+function SpecialistProfile ({ specialist }) {
+  const fullName = `${specialist.name || ''} ${specialist.lastName || ''}`.trim()
+  const initial = specialist.name?.charAt(0).toUpperCase() || 'E'
+
   return (
-    <>
-      <section className='profile'>
-        <div className='profile__container'>
-          <img className='profile__img' src={kinesiologoImg} alt='' />
-          <div className='profile__details'>
-            <h2 className='profile__subtitle'>Dr.Alejandro Sosa</h2>
-            <p className='profile__specialist'>
-              Cardiologia - Hospital Central
-            </p>
-          </div>
+    <section className='profile'>
+      <div className='profile__container'>
+        {specialist.avatarUrl
+          ? (
+            <img
+              className='profile__img'
+              src={specialist.avatarUrl}
+              alt={`Foto de ${fullName}`}
+            />
+            )
+          : (
+            <div className='profile__fallback' aria-hidden='true'>
+              {initial}
+            </div>
+            )}
+
+        <div className='profile__details'>
+          <h2 className='profile__subtitle'>{fullName}</h2>
+          <p className='profile__specialist'>
+            {specialist.specialty}
+            {specialist.workplace && ` - ${specialist.workplace}`}
+          </p>
+          {specialist.professionalLicense && (
+            <span className='profile__license'>
+              Matricula {specialist.professionalLicense}
+            </span>
+          )}
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   )
 }
 

@@ -21,6 +21,20 @@
   font-size: 15px;
 }
 
+.appointment-booking--status {
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #64748b;
+}
+
+.appointment-booking--status h1 {
+  margin-bottom: 8px;
+  color: #0f172a;
+  font-size: 26px;
+}
+
 .appointment-booking__content {
   display: grid;
   grid-template-columns: 290px minmax(0, 1fr) 290px;
@@ -74,7 +88,8 @@
 }
 
 .appointment-booking__detail-icon {
-  font-size: 20px;
+  flex: 0 0 20px;
+  color: var(--color-primary);
 }
 
 .appointment-booking__detail h3,

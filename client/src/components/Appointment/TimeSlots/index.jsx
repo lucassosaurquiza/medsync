@@ -1,38 +1,73 @@
 import './styles.css'
 
-const availableTimes = [
-  { label: '09:00 AM', value: '09:00:00', disabled: false },
-  { label: '09:30 AM', value: '09:30:00', disabled: false },
-  { label: '10:00 AM', value: '10:00:00', disabled: false },
-  { label: '10:30 AM', value: '10:30:00', disabled: false },
-  { label: '11:00 AM', value: '11:00:00', disabled: false },
-  { label: '11:30 AM', value: '11:30:00', disabled: true }
-]
+function TimeSlots ({
+  hasSelectedDate,
+  selectedDate,
+  slots,
+  isLoading,
+  error,
+  selectedTime,
+  setSelectedTime
+}) {
+  const allUnavailable = slots.length > 0 && slots.every(slot => !slot.available)
+  const selectedDateLabel = selectedDate?.toLocaleDateString('es-AR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'America/Argentina/Buenos_Aires'
+  })
 
-function TimeSlots ({ selectedTime, setSelectedTime }) {
   return (
     <section className='time'>
       <h2 className='time__subtitle'>3 - SELECCIONA TU HORARIO</h2>
 
-      <div className='time-container'>
-        {availableTimes.map(time => (
-          <button
-            key={time.value}
-            type='button'
-            disabled={time.disabled}
-            className={
-              time.disabled
-                ? 'time-container__button time-container__button--disable'
-                : selectedTime === time.value
-                ? 'time-container__button time-container__button--selected'
-                : 'time-container__button'
-            }
-            onClick={() => setSelectedTime(time.value)}
-          >
-            {time.label}
-          </button>
-        ))}
-      </div>
+      {selectedDateLabel && (
+        <p className='time__date'>{selectedDateLabel}</p>
+      )}
+
+      {!hasSelectedDate && (
+        <p className='time__status'>Selecciona una fecha para ver los horarios.</p>
+      )}
+
+      {hasSelectedDate && isLoading && (
+        <p className='time__status'>Consultando horarios...</p>
+      )}
+
+      {hasSelectedDate && !isLoading && error && (
+        <p className='time__status time__status--error'>{error}</p>
+      )}
+
+      {hasSelectedDate && !isLoading && !error && slots.length === 0 && (
+        <p className='time__status'>El especialista no atiende ese dia.</p>
+      )}
+
+      {hasSelectedDate && !isLoading && !error && allUnavailable && (
+        <p className='time__status time__status--warning'>
+          No quedan horarios disponibles para esta fecha.
+        </p>
+      )}
+
+      {hasSelectedDate && !isLoading && !error && slots.length > 0 && (
+        <div className='time-container'>
+          {slots.map(slot => (
+            <button
+              key={slot.time}
+              type='button'
+              disabled={!slot.available}
+              className={
+                !slot.available
+                  ? 'time-container__button time-container__button--disable'
+                  : selectedTime === slot.time
+                  ? 'time-container__button time-container__button--selected'
+                  : 'time-container__button'
+              }
+              onClick={() => setSelectedTime(slot.time)}
+            >
+              {slot.time} hs
+            </button>
+          ))}
+        </div>
+      )}
     </section>
   )
 }
