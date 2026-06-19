@@ -7,6 +7,7 @@ import {
   LogOut,
   Menu,
   Settings,
+  Users,
   X
 } from 'lucide-react'
 import { useState } from 'react'
@@ -91,6 +92,19 @@ function DashboardSidebar ({ activeView, setActiveView }) {
           >
             <CalendarDays size={18} />
             Turnos
+          </button>
+
+          <button
+            className={
+              activeView === 'patients'
+                ? 'dashboard-sidebar__link dashboard-sidebar__link--active'
+                : 'dashboard-sidebar__link'
+            }
+            type='button'
+            onClick={() => handleChangeView('patients')}
+          >
+            <Users size={18} />
+            Pacientes
           </button>
 
           <button

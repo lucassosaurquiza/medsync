@@ -84,6 +84,112 @@ const updatePatientMe = async (req, res) => {
   }
 }
 
+const getSpecialistPatients = async (req, res) => {
+  const specialistUserId = req.user.id
+
+  try {
+    const [rows] = await pool.query(
+      `
+      SELECT DISTINCT
+        patients.id,
+        patients.dni,
+        COALESCE(patients.phone, users.phone) AS phone,
+        users.name,
+        users.lastName,
+        users.email
+      FROM appointments
+      INNER JOIN patients ON patients.id = appointments.patientId
+      INNER JOIN users ON users.id = patients.userId
+      INNER JOIN specialists ON specialists.id = appointments.specialistId
+      WHERE specialists.userId = ?
+      ORDER BY users.lastName, users.name
+      `,
+      [specialistUserId]
+    )
+
+    res.json({ patients: rows })
+  } catch (error) {
+    console.error('Error al obtener pacientes del especialista:', error)
+
+    res.status(500).json({
+      message: 'Error al obtener los pacientes'
+    })
+  }
+}
+
+const getSpecialistPatientHistory = async (req, res) => {
+  const specialistUserId = req.user.id
+  const patientId = Number(req.params.patientId)
+
+  if (!Number.isInteger(patientId) || patientId <= 0) {
+    return res.status(400).json({
+      message: 'Paciente invalido'
+    })
+  }
+
+  try {
+    const [patientRows] = await pool.query(
+      `
+      SELECT
+        patients.id,
+        patients.dni,
+        COALESCE(patients.phone, users.phone) AS phone,
+        users.name,
+        users.lastName,
+        users.email
+      FROM patients
+      INNER JOIN users ON users.id = patients.userId
+      WHERE patients.id = ?
+        AND EXISTS (
+          SELECT 1
+          FROM appointments
+          INNER JOIN specialists
+            ON specialists.id = appointments.specialistId
+          WHERE appointments.patientId = patients.id
+            AND specialists.userId = ?
+        )
+      `,
+      [patientId, specialistUserId]
+    )
+
+    if (patientRows.length === 0) {
+      return res.status(404).json({
+        message: 'Paciente no encontrado'
+      })
+    }
+
+    const [appointments] = await pool.query(
+      `
+      SELECT
+        appointments.id,
+        DATE_FORMAT(appointments.date, '%Y-%m-%d') AS date,
+        TIME_FORMAT(appointments.time, '%H:%i') AS time,
+        appointments.status,
+        appointments.healthInsurance,
+        appointments.reason
+      FROM appointments
+      INNER JOIN specialists
+        ON specialists.id = appointments.specialistId
+      WHERE appointments.patientId = ?
+        AND specialists.userId = ?
+      ORDER BY appointments.date DESC, appointments.time DESC
+      `,
+      [patientId, specialistUserId]
+    )
+
+    res.json({
+      patient: patientRows[0],
+      appointments
+    })
+  } catch (error) {
+    console.error('Error al obtener historial del paciente:', error)
+
+    res.status(500).json({
+      message: 'Error al obtener el historial del paciente'
+    })
+  }
+}
+
 // OBTENER PACIENTE POR ID
 
 const getPatientById = async (req, res) => {
@@ -242,5 +348,7 @@ module.exports = {
   deletePatient,
   getPatientById,
   getPatientMe,
-  updatePatientMe
+  updatePatientMe,
+  getSpecialistPatients,
+  getSpecialistPatientHistory
 };

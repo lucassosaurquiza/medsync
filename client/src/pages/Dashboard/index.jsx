@@ -6,6 +6,7 @@ import { AgendaView } from './views/AgendaView'
 import { DashboardSidebar } from './components/DashboardSideBar'
 import { SettingsView } from './views/SettingsView'
 import { AvailabilityView } from './views/AvailabilityView'
+import { PatientsView } from './views/PatientsView'
 import { NotificationBell } from '../../components/NotificationBell'
 
 function Dashboard () {
@@ -25,6 +26,7 @@ function Dashboard () {
 
         {activeView === 'agenda' && <AgendaView />}
         {activeView === 'appointments' && <AppointmentsView />}
+        {activeView === 'patients' && <PatientsView />}
         {activeView === 'availability' && <AvailabilityView />}
         {activeView === 'settings' && <SettingsView />}
       </section>

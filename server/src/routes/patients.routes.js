@@ -6,8 +6,24 @@ const roleMiddleware = require('../middlewares/role.middleware')
 
 const {
   getPatientMe,
-  updatePatientMe
+  updatePatientMe,
+  getSpecialistPatients,
+  getSpecialistPatientHistory
 } = require('../controllers/patients.controller')
+
+router.get(
+  '/specialist/me',
+  authMiddleware,
+  roleMiddleware('specialist'),
+  getSpecialistPatients
+)
+
+router.get(
+  '/specialist/me/:patientId/history',
+  authMiddleware,
+  roleMiddleware('specialist'),
+  getSpecialistPatientHistory
+)
 
 router.get(
   '/me',
