@@ -37,6 +37,53 @@ const getPatientMe = async (req, res) => {
   }
 }
 
+const updatePatientMe = async (req, res) => {
+  const userId = req.user.id
+  const normalizedDni = String(req.body.dni || '').replace(/\D/g, '')
+  const normalizedPhone = String(req.body.phone || '').trim()
+
+  if (!/^\d{7,9}$/.test(normalizedDni)) {
+    return res.status(400).json({
+      message: 'El DNI debe tener entre 7 y 9 digitos'
+    })
+  }
+
+  if (!/^[0-9+()\s-]{8,30}$/.test(normalizedPhone)) {
+    return res.status(400).json({
+      message: 'El telefono ingresado no es valido'
+    })
+  }
+
+  try {
+    const [result] = await pool.query(
+      `
+      UPDATE patients
+      SET dni = ?, phone = ?
+      WHERE userId = ?
+      `,
+      [normalizedDni, normalizedPhone, userId]
+    )
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: 'Paciente no encontrado'
+      })
+    }
+
+    res.json({
+      message: 'Datos del paciente actualizados correctamente',
+      dni: normalizedDni,
+      phone: normalizedPhone
+    })
+  } catch (error) {
+    console.error('Error al actualizar datos del paciente:', error)
+
+    res.status(500).json({
+      message: 'Error al actualizar datos del paciente'
+    })
+  }
+}
+
 // OBTENER PACIENTE POR ID
 
 const getPatientById = async (req, res) => {
@@ -194,5 +241,6 @@ module.exports = {
   updatePatient,
   deletePatient,
   getPatientById,
-  getPatientMe
+  getPatientMe,
+  updatePatientMe
 };

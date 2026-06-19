@@ -1,8 +1,8 @@
-import { CalendarPlus } from 'lucide-react'
+import { CalendarPlus, LoaderCircle } from 'lucide-react'
 
 import './styles.css'
 
-function Payments ({ price, onConfirm }) {
+function Payments ({ price, onConfirm, isSubmitting }) {
   const numericPrice = Number(price)
   const formattedPrice = Number.isFinite(numericPrice)
     ? new Intl.NumberFormat('es-AR', {
@@ -18,9 +18,17 @@ function Payments ({ price, onConfirm }) {
 
       <p className='payment__price'>{formattedPrice}</p>
 
-      <button className='payment__button' type='button' onClick={onConfirm}>
-        Confirmar Reserva
-        <CalendarPlus className='payment__icon' size={22} />
+      <button
+        className='payment__button'
+        type='button'
+        onClick={onConfirm}
+        disabled={isSubmitting}
+        aria-busy={isSubmitting}
+      >
+        {isSubmitting ? 'Confirmando...' : 'Confirmar reserva'}
+        {isSubmitting
+          ? <LoaderCircle className='payment__icon payment__icon--loading' size={22} />
+          : <CalendarPlus className='payment__icon' size={22} />}
       </button>
     </section>
   )

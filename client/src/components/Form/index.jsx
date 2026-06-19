@@ -18,19 +18,6 @@ function Form ({ formData, setFormData }) {
         <h2 className='data-subtitle'>TUS DATOS</h2>
 
         <form className='data-form'>
-          <label className='data-form__label' htmlFor='fullName'>
-            Nombre Completo
-          </label>
-
-          <input
-            className='data-form__input'
-            id='fullName'
-            name='fullName'
-            type='text'
-            value={formData.fullName}
-            onChange={handleChange}
-          />
-
           <label className='data-form__label' htmlFor='dni'>
             DNI
           </label>
@@ -40,7 +27,23 @@ function Form ({ formData, setFormData }) {
             id='dni'
             name='dni'
             type='text'
+            inputMode='numeric'
+            maxLength={9}
             value={formData.dni}
+            onChange={handleChange}
+          />
+
+          <label className='data-form__label' htmlFor='phone'>
+            Telefono
+          </label>
+
+          <input
+            className='data-form__input'
+            id='phone'
+            name='phone'
+            type='tel'
+            maxLength={30}
+            value={formData.phone}
             onChange={handleChange}
           />
 

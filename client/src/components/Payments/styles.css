@@ -33,12 +33,27 @@
   border: none;
 }
 
-.payment__button:hover {
+.payment__button:not(:disabled):hover {
   background-color: #00684f;
+}
+
+.payment__button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .payment__icon {
   font-size: var(--font-h4);
+}
+
+.payment__icon--loading {
+  animation: payment-icon-spin 0.8s linear infinite;
+}
+
+@keyframes payment-icon-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 768px) {

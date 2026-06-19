@@ -50,9 +50,11 @@ function AppointmentBooking () {
   const [slots, setSlots] = useState([])
   const [isSlotsLoading, setIsSlotsLoading] = useState(false)
   const [slotsError, setSlotsError] = useState('')
+  const [slotsRefreshKey, setSlotsRefreshKey] = useState(0)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
-    fullName: '',
     dni: '',
+    phone: '',
     healthInsurance: '',
     reason: ''
   })
@@ -93,6 +95,44 @@ function AppointmentBooking () {
   }, [specialistId])
 
   useEffect(() => {
+    const controller = new AbortController()
+    const token = localStorage.getItem('token')
+
+    if (!token) return
+
+    const getPatientProfile = async () => {
+      try {
+        const response = await fetch(
+          'http://localhost:3000/api/patients/me',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            },
+            signal: controller.signal
+          }
+        )
+        const data = await response.json()
+
+        if (!response.ok) return
+
+        setFormData(currentFormData => ({
+          ...currentFormData,
+          dni: data.dni || '',
+          phone: data.phone || ''
+        }))
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('No se pudieron precargar los datos del paciente')
+        }
+      }
+    }
+
+    getPatientProfile()
+
+    return () => controller.abort()
+  }, [])
+
+  useEffect(() => {
     if (!selectedDate) return
 
     const controller = new AbortController()
@@ -129,7 +169,7 @@ function AppointmentBooking () {
     getAvailableSlots()
 
     return () => controller.abort()
-  }, [selectedDate, specialistId])
+  }, [selectedDate, specialistId, slotsRefreshKey])
 
   const handleDateSelect = date => {
     setSelectedDate(date || null)
@@ -140,6 +180,8 @@ function AppointmentBooking () {
   }
 
   const handleCreateAppointment = async () => {
+    if (isSubmitting) return
+
     if (!specialist) {
       toast.error('No se pudo identificar al especialista')
       return
@@ -155,10 +197,12 @@ function AppointmentBooking () {
       return
     }
 
-    if (!formData.fullName.trim() || !formData.dni.trim()) {
-      toast.error('Completá tus datos')
+    if (!formData.dni.trim() || !formData.phone.trim()) {
+      toast.error('Completa tu DNI y telefono')
       return
     }
+
+    setIsSubmitting(true)
 
     const token = localStorage.getItem('token')
 
@@ -166,16 +210,22 @@ function AppointmentBooking () {
       const patientResponse = await fetch(
         'http://localhost:3000/api/patients/me',
         {
+          method: 'PATCH',
           headers: {
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`
-          }
+          },
+          body: JSON.stringify({
+            dni: formData.dni,
+            phone: formData.phone
+          })
         }
       )
 
       const patientData = await patientResponse.json()
 
       if (!patientResponse.ok) {
-        toast.error(patientData.message)
+        toast.error(patientData.message || 'No se pudieron guardar tus datos')
         return
       }
 
@@ -189,7 +239,6 @@ function AppointmentBooking () {
           },
           body: JSON.stringify({
             specialistId,
-            patientId: patientData.id,
             date: formatDateForApi(selectedDate),
             time: selectedTime,
             healthInsurance: formData.healthInsurance,
@@ -199,6 +248,24 @@ function AppointmentBooking () {
       )
 
       const appointmentData = await appointmentResponse.json()
+
+      if (appointmentResponse.status === 409) {
+        setSelectedTime('')
+        setSlots(currentSlots => (
+          currentSlots.map(slot => (
+            slot.time === selectedTime
+              ? { ...slot, available: false }
+              : slot
+          ))
+        ))
+        setSlotsRefreshKey(currentKey => currentKey + 1)
+
+        toast.error(
+          appointmentData.message ||
+          'Ese horario acaba de ser reservado. Elegi otro.'
+        )
+        return
+      }
 
       if (!appointmentResponse.ok) {
         toast.error(appointmentData.message)
@@ -222,6 +289,8 @@ function AppointmentBooking () {
       toast.success('Turno reservado correctamente')
     } catch {
       toast.error('Error al reservar turno')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -308,6 +377,7 @@ function AppointmentBooking () {
               <Payments
                 price={specialist.price}
                 onConfirm={handleCreateAppointment}
+                isSubmitting={isSubmitting}
               />
             </aside>
           </section>
