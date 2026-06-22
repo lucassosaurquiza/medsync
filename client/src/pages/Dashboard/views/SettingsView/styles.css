@@ -2,13 +2,43 @@
   width: 100%;
 }
 
-.settings-view__status {
-  color: #64748b;
-  font-size: 15px;
-}
-
 .settings-view__header {
   margin-bottom: 28px;
+}
+
+.settings-view__state {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  min-height: 130px;
+  padding: 28px;
+  border: 1px dashed #94a3b8;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #64748b;
+}
+
+.settings-view__state h2 {
+  color: #1e293b;
+  font-size: 18px;
+}
+
+.settings-view__state--error {
+  border-color: #fca5a5;
+  background-color: #fff7f7;
+}
+
+.settings-view__state button {
+  margin-top: 8px;
+  min-height: 40px;
+  border: none;
+  border-radius: 8px;
+  padding: 0 16px;
+  background-color: var(--color-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .settings-view__eyebrow {

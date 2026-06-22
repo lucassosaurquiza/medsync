@@ -21,7 +21,9 @@ function Dashboard () {
 
       <section className='dashboard__content'>
         <div className='dashboard__notifications'>
-          <NotificationBell />
+          <NotificationBell
+            onNotificationClick={() => setActiveView('appointments')}
+          />
         </div>
 
         {activeView === 'agenda' && <AgendaView />}

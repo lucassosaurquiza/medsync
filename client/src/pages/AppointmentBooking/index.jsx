@@ -13,6 +13,7 @@ import { Header } from '../../components/Header'
 import { Payments } from '../../components/Payments'
 import { SpecialistProfile } from '../../components/SpecialistProfile'
 import { MainLayout } from '../../layouts/MainLayout'
+import { API_URL } from '../../config/api'
 
 const APP_TIME_ZONE = 'America/Argentina/Buenos_Aires'
 
@@ -68,7 +69,7 @@ function AppointmentBooking () {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/api/specialists/${encodeURIComponent(specialistId)}`,
+          `${API_URL}/api/specialists/${encodeURIComponent(specialistId)}`,
           { signal: controller.signal }
         )
         const data = await response.json()
@@ -103,7 +104,7 @@ function AppointmentBooking () {
     const getPatientProfile = async () => {
       try {
         const response = await fetch(
-          'http://localhost:3000/api/patients/me',
+          `${API_URL}/api/patients/me`,
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -144,7 +145,7 @@ function AppointmentBooking () {
       try {
         const date = formatDateForApi(selectedDate)
         const response = await fetch(
-          `http://localhost:3000/api/availability/${encodeURIComponent(specialistId)}/slots?date=${encodeURIComponent(date)}`,
+          `${API_URL}/api/availability/${encodeURIComponent(specialistId)}/slots?date=${encodeURIComponent(date)}`,
           { signal: controller.signal }
         )
         const data = await response.json()
@@ -208,7 +209,7 @@ function AppointmentBooking () {
 
     try {
       const patientResponse = await fetch(
-        'http://localhost:3000/api/patients/me',
+        `${API_URL}/api/patients/me`,
         {
           method: 'PATCH',
           headers: {
@@ -230,7 +231,7 @@ function AppointmentBooking () {
       }
 
       const appointmentResponse = await fetch(
-        'http://localhost:3000/api/appointments',
+        `${API_URL}/api/appointments`,
         {
           method: 'POST',
           headers: {

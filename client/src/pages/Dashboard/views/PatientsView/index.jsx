@@ -12,8 +12,9 @@ import {
 } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useSmartPolling } from '../../../../hooks/useSmartPolling'
+import { API_URL } from '../../../../config/api'
 
-const PATIENTS_URL = 'http://localhost:3000/api/patients/specialist/me'
+const PATIENTS_URL = `${API_URL}/api/patients/specialist/me`
 
 const statusLabels = {
   pending: 'Pendiente',

@@ -3,6 +3,7 @@ import './styles.css'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import { API_URL } from '../../config/api'
 
 function SpecialistRegisterForm () {
   const navigate = useNavigate()
@@ -35,7 +36,7 @@ function SpecialistRegisterForm () {
 
     try {
       const response = await fetch(
-        'http://localhost:3000/api/auth/register',
+        `${API_URL}/api/auth/register`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

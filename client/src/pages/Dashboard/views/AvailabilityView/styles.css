@@ -2,14 +2,45 @@
   width: 100%;
 }
 
-.availability-view__status {
-  color: #64748b;
-  font-size: 15px;
-}
-
 .availability-view__header {
   margin-bottom: 28px;
   padding-right: 48px;
+}
+
+.availability-view__state {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  min-height: 130px;
+  padding: 28px;
+  border: 1px dashed #94a3b8;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #64748b;
+}
+
+.availability-view__state h2 {
+  color: #1e293b;
+  font-size: 18px;
+}
+
+.availability-view__state--error {
+  border-color: #fca5a5;
+  background-color: #fff7f7;
+}
+
+.availability-view__state button,
+.blocks-list__status button {
+  margin-top: 8px;
+  min-height: 40px;
+  border: none;
+  border-radius: 8px;
+  padding: 0 16px;
+  background-color: var(--color-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .availability-view__eyebrow {
@@ -310,6 +341,19 @@
   padding: 24px;
   color: #64748b;
   font-size: 14px;
+}
+
+.blocks-list__status--error {
+  display: grid;
+  justify-items: start;
+  gap: 5px;
+  background-color: #fff7f7;
+  color: #b91c1c;
+}
+
+.blocks-list__status--error strong {
+  color: #991b1b;
+  font-size: 15px;
 }
 
 .blocks-list__empty {

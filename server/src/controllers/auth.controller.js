@@ -2,6 +2,9 @@ const pool = require("../config/db");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken")
 
+const ALLOWED_ROLES = ['patient', 'specialist']
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 // REGISTRAR USUARIO
 const register = async (req, res) => {
   const {
@@ -17,10 +20,8 @@ const register = async (req, res) => {
     workplace,
     avatarUrl,
     price
-  } = req.body
+  } = req.body || {}
 
-  const allowedRoles = ['patient', 'specialist']
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   const normalizeOptionalString = value =>
     typeof value === 'string' && value.trim() ? value.trim() : null
 
@@ -44,13 +45,29 @@ const register = async (req, res) => {
     })
   }
 
-  if (!emailPattern.test(email.trim())) {
+  if (Buffer.byteLength(password, 'utf8') > 72) {
+    return res.status(400).json({
+      message: 'La contrasena no puede superar 72 bytes'
+    })
+  }
+
+  if (
+    name.trim().length > 100 ||
+    lastName.trim().length > 100 ||
+    email.trim().length > 150
+  ) {
+    return res.status(400).json({
+      message: 'Nombre, apellido o email superan el largo permitido'
+    })
+  }
+
+  if (!EMAIL_PATTERN.test(email.trim())) {
     return res.status(400).json({
       message: 'El formato del email no es válido'
     })
   }
 
-  if (!allowedRoles.includes(role)) {
+  if (!ALLOWED_ROLES.includes(role)) {
     return res.status(400).json({
       message: 'Tipo de cuenta inválido'
     })
@@ -65,6 +82,27 @@ const register = async (req, res) => {
   ) {
     return res.status(400).json({
       message: 'Especialidad y matrícula profesional son obligatorias'
+    })
+  }
+
+  if (
+    role === 'specialist' &&
+    (specialty.trim().length > 100 ||
+      professionalLicense.trim().length > 100)
+  ) {
+    return res.status(400).json({
+      message: 'Especialidad o matricula superan el largo permitido'
+    })
+  }
+
+  if (
+    normalizeOptionalString(phone)?.length > 30 ||
+    normalizeOptionalString(dni)?.length > 20 ||
+    normalizeOptionalString(workplace)?.length > 100 ||
+    normalizeOptionalString(avatarUrl)?.length > 255
+  ) {
+    return res.status(400).json({
+      message: 'Uno de los datos ingresados supera el largo permitido'
     })
   }
 
@@ -198,13 +236,41 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
 
-  const { email, password } = req.body;
+  const { email, password } = req.body || {};
+
+  if (
+    typeof email !== 'string' ||
+    !email.trim() ||
+    typeof password !== 'string' ||
+    !password
+  ) {
+    return res.status(400).json({
+      message: 'Email y contrasena son obligatorios'
+    })
+  }
+
+  const normalizedEmail = email.trim().toLowerCase()
+
+  if (
+    normalizedEmail.length > 150 ||
+    !EMAIL_PATTERN.test(normalizedEmail) ||
+    Buffer.byteLength(password, 'utf8') > 72
+  ) {
+    return res.status(400).json({
+      message: 'Email o contrasena no son validos'
+    })
+  }
 
   try {
 
     const [rows] = await pool.query(
-      "SELECT * FROM users WHERE email = ?",
-      [email]
+      `
+      SELECT id, name, lastName, email, password, role
+      FROM users
+      WHERE email = ?
+      LIMIT 1
+      `,
+      [normalizedEmail]
     );
 
     if (rows.length === 0) {

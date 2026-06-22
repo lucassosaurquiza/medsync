@@ -8,10 +8,17 @@ const getMyNotifications = async (req, res) => {
 
     const [rows] = await pool.query(
       `
-      SELECT *
+      SELECT
+        id,
+        title,
+        message,
+        type,
+        isRead,
+        created_at
       FROM notifications
       WHERE userId = ?
       ORDER BY created_at DESC
+      LIMIT 50
       `,
       [userId]
     )

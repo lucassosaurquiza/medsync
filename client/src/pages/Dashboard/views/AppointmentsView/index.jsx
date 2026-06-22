@@ -1,9 +1,11 @@
 import './styles.css'
 
 import { useCallback, useMemo, useState } from 'react'
+import toast from 'react-hot-toast'
 import { useSmartPolling } from '../../../../hooks/useSmartPolling'
+import { API_URL as API_BASE_URL } from '../../../../config/api'
 
-const API_URL = 'http://localhost:3000/api/appointments'
+const API_URL = `${API_BASE_URL}/api/appointments`
 
 const statusOptions = ['pending', 'confirmed', 'cancelled']
 
@@ -68,6 +70,11 @@ function AppointmentsView () {
 
   useSmartPolling(fetchAppointments)
 
+  const handleRetry = () => {
+    setLoading(true)
+    fetchAppointments()
+  }
+
   const updateAppointmentStatus = async (appointmentId, status) => {
     if (updatingAppointmentId !== null) return
 
@@ -101,7 +108,7 @@ function AppointmentsView () {
         )
       )
     } catch (error) {
-      setError(error.message)
+      toast.error(error.message)
     } finally {
       setUpdatingAppointmentId(null)
     }
@@ -152,9 +159,12 @@ function AppointmentsView () {
       )}
 
       {!loading && error && (
-        <div className='appointments-view__empty'>
-          <h3>Error</h3>
+        <div className='appointments-view__empty appointments-view__empty--error'>
+          <h3>No pudimos cargar los turnos</h3>
           <p>{error}</p>
+          <button type='button' onClick={handleRetry}>
+            Reintentar
+          </button>
         </div>
       )}
 

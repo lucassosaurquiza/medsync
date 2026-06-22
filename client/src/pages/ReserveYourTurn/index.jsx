@@ -6,8 +6,7 @@ import { Header } from '../../components/Header'
 import { Footer } from '../../components/Footer'
 
 import { MainLayout } from '../../layouts/MainLayout'
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+import { API_URL } from '../../config/api'
 
 const categories = [
   'Todos',

@@ -9,8 +9,9 @@ import {
 } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useSmartPolling } from '../../../../hooks/useSmartPolling'
+import { API_URL } from '../../../../config/api'
 
-const AGENDA_URL = 'http://localhost:3000/api/appointments/specialist/me/agenda'
+const AGENDA_URL = `${API_URL}/api/appointments/specialist/me/agenda`
 
 const getPatientFullName = appointment => (
   [appointment.patientName, appointment.patientLastName]

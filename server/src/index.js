@@ -1,58 +1,85 @@
-// VARIABLES DE ENTORNO
-require("dotenv").config();
+require('dotenv').config()
 
-// IMPORTS
-const express = require("express");
-const cors = require("cors");
-const pool = require("./config/db");
-const appointmentsRoutes = require("./routes/appointments.routes");
-const specialistsRoutes = require("./routes/specialists.routes");
-const patientsRoutes = require("./routes/patients.routes");
-const authRoutes = require("./routes/auth.routes")
-const notificationsRoutes = require('./routes/notifications.routes')
-const availabilityRoutes = require('./routes/availability.routes')
-const blocksRoutes = require('./routes/blocks.routes')
+const requiredEnvironmentVariables = [
+  'DB_HOST',
+  'DB_USER',
+  'DB_PASSWORD',
+  'DB_NAME',
+  'JWT_SECRET'
+]
+const missingEnvironmentVariables = requiredEnvironmentVariables.filter(
+  variableName => !process.env[variableName]
+)
 
-// APP
-const app = express();
+if (missingEnvironmentVariables.length > 0) {
+  throw new Error(
+    `Faltan variables de entorno: ${missingEnvironmentVariables.join(', ')}`
+  )
+}
 
-// MIDDLEWARES
-app.use(cors());
-app.use(express.json());
+if (
+  process.env.NODE_ENV === 'production' &&
+  process.env.JWT_SECRET.length < 32
+) {
+  throw new Error('JWT_SECRET debe tener al menos 32 caracteres en produccion')
+}
 
-// RUTAS
-app.get("/api/health", (req, res) => {
-  res.json({
-    status: "ok",
-    message: "Servidor funcionando"
-  });
-});
+const app = require('./app')
+const pool = require('./config/db')
 
-app.use("/api/appointments", appointmentsRoutes);
-app.use("/api/specialists", specialistsRoutes);
-app.use("/api/patients", patientsRoutes);
-app.use("/api/auth", authRoutes);
-app.use('/api/notifications', notificationsRoutes)
-app.use('/api/availability', availabilityRoutes)
-app.use('/api/blocks', blocksRoutes)
+const PORT = process.env.PORT || 3000
+let server
 
+const log = (level, event, details = {}) => {
+  console[level](JSON.stringify({ level, event, ...details }))
+}
 
-// TEST MYSQL
-async function testDB() {
+const startServer = async () => {
   try {
-    const connection = await pool.getConnection();
-    console.log("✅ Conexión a MySQL exitosa");
-    connection.release();
+    const connection = await pool.getConnection()
+    connection.release()
+    log('info', 'database_connected')
+
+    server = app.listen(PORT, () => {
+      log('info', 'server_started', { port: Number(PORT) })
+    })
   } catch (error) {
-    console.error("❌ Error al conectar con MySQL:", error.message);
+    log('error', 'server_start_failed', { message: error.message })
+    process.exitCode = 1
   }
 }
 
-testDB();
+const shutdown = signal => {
+  log('info', 'shutdown_started', { signal })
 
-// SERVIDOR
-const PORT = process.env.PORT || 3000;
+  const forceShutdown = setTimeout(() => {
+    log('error', 'shutdown_timeout')
+    process.exit(1)
+  }, 10000)
+  forceShutdown.unref()
 
-app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en puerto ${PORT}`);
-});
+  const closeDatabase = async exitCode => {
+    try {
+      await pool.end()
+      log('info', 'shutdown_completed')
+      process.exit(exitCode)
+    } catch (error) {
+      log('error', 'database_shutdown_failed', { message: error.message })
+      process.exit(1)
+    }
+  }
+
+  if (!server) {
+    void closeDatabase(0)
+    return
+  }
+
+  server.close(error => {
+    void closeDatabase(error ? 1 : 0)
+  })
+}
+
+process.once('SIGTERM', () => shutdown('SIGTERM'))
+process.once('SIGINT', () => shutdown('SIGINT'))
+
+startServer()

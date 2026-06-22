@@ -2,8 +2,9 @@ import './styles.css'
 
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
+import { API_URL as API_BASE_URL } from '../../../../config/api'
 
-const API_URL = 'http://localhost:3000/api/specialists/me'
+const API_URL = `${API_BASE_URL}/api/specialists/me`
 
 const emptyProfile = {
   name: '',
@@ -15,17 +16,34 @@ const emptyProfile = {
   avatarUrl: ''
 }
 
+function SettingsHeader () {
+  return (
+    <header className='settings-view__header'>
+      <div>
+        <span className='settings-view__eyebrow'>Configuracion</span>
+        <h1>Perfil profesional</h1>
+        <p>Actualiza los datos que tus pacientes ven al reservar.</p>
+      </div>
+    </header>
+  )
+}
+
 function SettingsView () {
   const [profile, setProfile] = useState(emptyProfile)
   const [originalProfile, setOriginalProfile] = useState(emptyProfile)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [loadError, setLoadError] = useState('')
+  const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
     const controller = new AbortController()
 
     const getProfile = async () => {
       try {
+        setIsLoading(true)
+        setLoadError('')
+
         const token = localStorage.getItem('token')
         const response = await fetch(API_URL, {
           signal: controller.signal,
@@ -53,7 +71,7 @@ function SettingsView () {
         setOriginalProfile(nextProfile)
       } catch (error) {
         if (error.name !== 'AbortError') {
-          toast.error(error.message)
+          setLoadError(error.message)
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -65,7 +83,7 @@ function SettingsView () {
     getProfile()
 
     return () => controller.abort()
-  }, [])
+  }, [reloadKey])
 
   const handleChange = event => {
     const { name, value } = event.target
@@ -133,18 +151,34 @@ function SettingsView () {
   }
 
   if (isLoading) {
-    return <p className='settings-view__status'>Cargando perfil...</p>
+    return (
+      <section className='settings-view'>
+        <SettingsHeader />
+        <div className='settings-view__state'>
+          <h2>Cargando perfil...</h2>
+        </div>
+      </section>
+    )
+  }
+
+  if (loadError) {
+    return (
+      <section className='settings-view'>
+        <SettingsHeader />
+        <div className='settings-view__state settings-view__state--error'>
+          <h2>No pudimos cargar tu perfil</h2>
+          <p>{loadError}</p>
+          <button type='button' onClick={() => setReloadKey(key => key + 1)}>
+            Reintentar
+          </button>
+        </div>
+      </section>
+    )
   }
 
   return (
     <section className='settings-view'>
-      <header className='settings-view__header'>
-        <div>
-          <span className='settings-view__eyebrow'>Configuracion</span>
-          <h1>Perfil profesional</h1>
-          <p>Actualiza los datos que tus pacientes ven al reservar.</p>
-        </div>
-      </header>
+      <SettingsHeader />
 
       <form className='settings-form' onSubmit={handleSubmit}>
         <div className='settings-form__grid'>

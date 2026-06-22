@@ -3,9 +3,10 @@ import './styles.css'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { Trash2 } from 'lucide-react'
+import { API_URL as API_BASE_URL } from '../../../../config/api'
 
-const API_URL = 'http://localhost:3000/api/availability/me'
-const BLOCKS_API_URL = 'http://localhost:3000/api/blocks/me'
+const API_URL = `${API_BASE_URL}/api/availability/me`
+const BLOCKS_API_URL = `${API_BASE_URL}/api/blocks/me`
 
 const weekDays = [
   { dayOfWeek: 1, label: 'Lunes' },
@@ -70,6 +71,16 @@ const sortBlocks = blocks => [...blocks].sort((firstBlock, secondBlock) => {
   return firstValue.localeCompare(secondValue)
 })
 
+function AvailabilityHeader () {
+  return (
+    <header className='availability-view__header'>
+      <span className='availability-view__eyebrow'>Agenda semanal</span>
+      <h1>Disponibilidad</h1>
+      <p>Defini los dias y horarios en los que recibis pacientes.</p>
+    </header>
+  )
+}
+
 function AvailabilityView () {
   const [availability, setAvailability] = useState({
     appointmentDuration: 30,
@@ -77,10 +88,14 @@ function AvailabilityView () {
   })
   const [originalAvailability, setOriginalAvailability] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [availabilityError, setAvailabilityError] = useState('')
+  const [availabilityReloadKey, setAvailabilityReloadKey] = useState(0)
   const [isSaving, setIsSaving] = useState(false)
   const [blocks, setBlocks] = useState([])
   const [blockForm, setBlockForm] = useState(createEmptyBlock)
   const [isBlocksLoading, setIsBlocksLoading] = useState(true)
+  const [blocksError, setBlocksError] = useState('')
+  const [blocksReloadKey, setBlocksReloadKey] = useState(0)
   const [isCreatingBlock, setIsCreatingBlock] = useState(false)
   const [deletingBlockId, setDeletingBlockId] = useState(null)
 
@@ -89,6 +104,9 @@ function AvailabilityView () {
 
     const getAvailability = async () => {
       try {
+        setIsLoading(true)
+        setAvailabilityError('')
+
         const token = localStorage.getItem('token')
         const response = await fetch(API_URL, {
           signal: controller.signal,
@@ -125,7 +143,7 @@ function AvailabilityView () {
         setOriginalAvailability(cloneAvailability(nextAvailability))
       } catch (error) {
         if (error.name !== 'AbortError') {
-          toast.error(error.message)
+          setAvailabilityError(error.message)
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -137,13 +155,16 @@ function AvailabilityView () {
     getAvailability()
 
     return () => controller.abort()
-  }, [])
+  }, [availabilityReloadKey])
 
   useEffect(() => {
     const controller = new AbortController()
 
     const getBlocks = async () => {
       try {
+        setIsBlocksLoading(true)
+        setBlocksError('')
+
         const token = localStorage.getItem('token')
         const response = await fetch(BLOCKS_API_URL, {
           signal: controller.signal,
@@ -160,7 +181,7 @@ function AvailabilityView () {
         setBlocks(sortBlocks(data))
       } catch (error) {
         if (error.name !== 'AbortError') {
-          toast.error(error.message)
+          setBlocksError(error.message)
         }
       } finally {
         if (!controller.signal.aborted) {
@@ -172,7 +193,7 @@ function AvailabilityView () {
     getBlocks()
 
     return () => controller.abort()
-  }, [])
+  }, [blocksReloadKey])
 
   const handleDurationChange = event => {
     setAvailability(current => ({
@@ -344,16 +365,37 @@ function AvailabilityView () {
   }
 
   if (isLoading) {
-    return <p className='availability-view__status'>Cargando disponibilidad...</p>
+    return (
+      <section className='availability-view'>
+        <AvailabilityHeader />
+        <div className='availability-view__state'>
+          <h2>Cargando disponibilidad...</h2>
+        </div>
+      </section>
+    )
+  }
+
+  if (availabilityError) {
+    return (
+      <section className='availability-view'>
+        <AvailabilityHeader />
+        <div className='availability-view__state availability-view__state--error'>
+          <h2>No pudimos cargar tu disponibilidad</h2>
+          <p>{availabilityError}</p>
+          <button
+            type='button'
+            onClick={() => setAvailabilityReloadKey(key => key + 1)}
+          >
+            Reintentar
+          </button>
+        </div>
+      </section>
+    )
   }
 
   return (
     <section className='availability-view'>
-      <header className='availability-view__header'>
-        <span className='availability-view__eyebrow'>Agenda semanal</span>
-        <h1>Disponibilidad</h1>
-        <p>Defini los dias y horarios en los que recibis pacientes.</p>
-      </header>
+      <AvailabilityHeader />
 
       <form className='availability-form' onSubmit={handleSubmit}>
         <div className='availability-form__duration'>
@@ -464,7 +506,8 @@ function AvailabilityView () {
           </div>
         </header>
 
-        <form className='block-form' onSubmit={handleCreateBlock}>
+        {!isBlocksLoading && !blocksError && (
+          <form className='block-form' onSubmit={handleCreateBlock}>
           <label className='block-form__field'>
             Fecha
             <input
@@ -558,21 +601,35 @@ function AvailabilityView () {
           >
             {isCreatingBlock ? 'Bloqueando...' : 'Agregar bloqueo'}
           </button>
-        </form>
+          </form>
+        )}
 
         <div className='blocks-list'>
           {isBlocksLoading && (
             <p className='blocks-list__status'>Cargando bloqueos...</p>
           )}
 
-          {!isBlocksLoading && blocks.length === 0 && (
+          {!isBlocksLoading && blocksError && (
+            <div className='blocks-list__status blocks-list__status--error'>
+              <strong>No pudimos cargar los bloqueos</strong>
+              <span>{blocksError}</span>
+              <button
+                type='button'
+                onClick={() => setBlocksReloadKey(key => key + 1)}
+              >
+                Reintentar
+              </button>
+            </div>
+          )}
+
+          {!isBlocksLoading && !blocksError && blocks.length === 0 && (
             <div className='blocks-list__empty'>
               <strong>No tenes bloqueos proximos</strong>
               <span>Las excepciones que agregues apareceran aca.</span>
             </div>
           )}
 
-          {!isBlocksLoading && blocks.map(block => (
+          {!isBlocksLoading && !blocksError && blocks.map(block => (
             <article className='block-item' key={block.id}>
               <div className='block-item__details'>
                 <strong>{formatBlockDate(block.blockedDate)}</strong>

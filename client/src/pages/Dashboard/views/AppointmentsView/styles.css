@@ -78,8 +78,31 @@
 .appointments-view__empty {
   background-color: #fff;
   border: 1px dashed #94a3b8;
-  border-radius: 18px;
+  border-radius: 8px;
   padding: 32px;
+}
+
+.appointments-view__empty--error {
+  border-color: #fca5a5;
+  background-color: #fff7f7;
+}
+
+.appointments-view__empty p {
+  margin-top: 6px;
+  color: #64748b;
+}
+
+.appointments-view__empty button {
+  margin-top: 16px;
+  min-height: 40px;
+  border: none;
+  border-radius: 8px;
+  padding: 0 16px;
+  background-color: var(--color-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .appointment-request-card {

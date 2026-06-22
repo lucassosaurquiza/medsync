@@ -6,6 +6,7 @@ import { Header } from '../../components/Header'
 import { Footer } from '../../components/Footer'
 import { MainLayout } from '../../layouts/MainLayout'
 import { CancelAppointmentModal } from '../../components/CancelAppointmentModal'
+import { API_URL } from '../../config/api'
 
 const statusOptions = ['all', 'pending', 'confirmed', 'cancelled']
 
@@ -22,7 +23,7 @@ function MyAppointments () {
 
     try {
       const response = await fetch(
-        'http://localhost:3000/api/appointments/my-appointments',
+        `${API_URL}/api/appointments/my-appointments`,
         {
           signal,
           headers: {
@@ -120,7 +121,7 @@ function MyAppointments () {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/appointments/${selectedAppointment.id}/cancel`,
+        `${API_URL}/api/appointments/${selectedAppointment.id}/cancel`,
         {
           method: 'PATCH',
           headers: {

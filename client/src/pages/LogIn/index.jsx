@@ -12,6 +12,7 @@ import {
   Lock,
   Mail
 } from 'lucide-react'
+import { API_URL } from '../../config/api'
 
 function Login () {
   const [email, setEmail] = useState('')
@@ -22,7 +23,7 @@ function Login () {
   const handleSubmit = async event => {
     event.preventDefault()
 
-    const response = await fetch('http://localhost:3000/api/auth/login', {
+    const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
