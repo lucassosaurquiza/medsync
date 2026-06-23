@@ -1,4 +1,5 @@
 const pool = require("../config/db");
+const { notifyUser } = require('../realtime/socket')
 const {
   AvailabilityError,
   getArgentinaNow,
@@ -162,6 +163,10 @@ const createAppointment = async (req, res) => {
 
     await connection.commit()
     transactionStarted = false
+    notifyUser(specialist.userId, {
+      reason: 'appointment_created',
+      appointmentId: result.insertId
+    })
 
     res.status(201).json({
       message: 'Turno creado',
@@ -203,6 +208,7 @@ const getAppointments = async (req, res) => {
         appointments.status,
         appointments.healthInsurance,
         appointments.reason,
+        appointments.cancellationReason,
         patients.dni,
         patients.phone,
         patient_user.lastName AS patientLastName,
@@ -241,6 +247,7 @@ const getAppointmentById = async (req, res) => {
         appointments.status,
         appointments.healthInsurance,
         appointments.reason,
+        appointments.cancellationReason,
         patients.dni,
         patients.phone,
         patient_user.lastName AS patientLastName,
@@ -295,6 +302,7 @@ const getMyAppointments = async (req, res) => {
         appointments.date,
         appointments.time,
         appointments.status,
+        appointments.cancellationReason,
         specialists.specialty,
         specialist_user.name,
         specialist_user.lastName
@@ -350,6 +358,7 @@ const getSpecialistAppointments = async (req, res) => {
         appointments.status,
         appointments.healthInsurance,
         appointments.reason,
+        appointments.cancellationReason,
         patients.dni,
         patients.phone,
         patient_user.name AS patientName,
@@ -406,6 +415,7 @@ const getSpecialistAgenda = async (req, res) => {
         appointments.status,
         appointments.healthInsurance,
         appointments.reason,
+        appointments.cancellationReason,
         patients.dni,
         patients.phone,
         patient_user.name AS patientName,
@@ -438,13 +448,22 @@ const getSpecialistAgenda = async (req, res) => {
 
 const updateAppointment = async (req, res) => {
   const { id } = req.params
-  const { status } = req.body
+  const { status, cancellationReason } = req.body
 
   const allowedStatuses = ['confirmed', 'cancelled']
 
   if (!allowedStatuses.includes(status)) {
     return res.status(400).json({
       message: 'Estado de turno inválido'
+    })
+  }
+
+  const normalizedCancellationReason =
+    typeof cancellationReason === 'string' ? cancellationReason.trim() : ''
+
+  if (status === 'cancelled' && normalizedCancellationReason.length < 5) {
+    return res.status(400).json({
+      message: 'El motivo de cancelacion debe tener al menos 5 caracteres'
     })
   }
 
@@ -485,21 +504,32 @@ const updateAppointment = async (req, res) => {
 
     const appointment = appointmentRows[0]
 
-    if (appointment.status !== 'pending') {
+    const canConfirmPending =
+      appointment.status === 'pending' && status === 'confirmed'
+    const canCancelPending =
+      appointment.status === 'pending' && status === 'cancelled'
+    const canCancelConfirmed =
+      appointment.status === 'confirmed' && status === 'cancelled'
+
+    if (!canConfirmPending && !canCancelPending && !canCancelConfirmed) {
       await connection.rollback()
 
       return res.status(409).json({
-        message: 'El turno ya fue procesado'
+        message: 'El turno no puede cambiar a ese estado'
       })
     }
 
     await connection.query(
       `
       UPDATE appointments
-      SET status = ?
+      SET status = ?, cancellationReason = ?
       WHERE id = ?
       `,
-      [status, id]
+      [
+        status,
+        status === 'cancelled' ? normalizedCancellationReason : null,
+        id
+      ]
     )
 
     const notificationTitle =
@@ -508,7 +538,7 @@ const updateAppointment = async (req, res) => {
     const notificationMessage =
       status === 'confirmed'
         ? `Tu turno con ${appointment.specialistName} ${appointment.specialistLastName} fue confirmado.`
-        : `Tu turno con ${appointment.specialistName} ${appointment.specialistLastName} fue cancelado.`
+        : `Tu turno con ${appointment.specialistName} ${appointment.specialistLastName} fue cancelado. Motivo: ${normalizedCancellationReason}`
 
     const notificationType = status === 'confirmed' ? 'success' : 'error'
 
@@ -532,6 +562,10 @@ const updateAppointment = async (req, res) => {
     )
 
     await connection.commit()
+    notifyUser(appointment.patientUserId, {
+      reason: 'appointment_status_updated',
+      appointmentId: appointment.id
+    })
 
     res.json({
       message: 'Turno actualizado correctamente'
@@ -639,6 +673,10 @@ const cancelMyAppointment = async (req, res) => {
 
     await connection.commit()
     transactionStarted = false
+    notifyUser(appointment.specialistUserId, {
+      reason: 'appointment_cancelled_by_patient',
+      appointmentId: appointment.id
+    })
 
     res.json({
       message: 'Turno cancelado correctamente'

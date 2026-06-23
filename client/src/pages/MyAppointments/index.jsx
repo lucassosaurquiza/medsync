@@ -268,6 +268,14 @@ function MyAppointments () {
                       </div>
                     </div>
 
+                    {appointment.status === 'cancelled' &&
+                      appointment.cancellationReason && (
+                        <div className='appointment-card__cancel-reason'>
+                          <strong>Motivo de cancelacion:</strong>
+                          <span>{appointment.cancellationReason}</span>
+                        </div>
+                    )}
+
                     <div className='appointment-card__actions'>
                       <span
                         className={`appointment-status appointment-status--${appointment.status}`}

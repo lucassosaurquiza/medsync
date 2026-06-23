@@ -164,6 +164,22 @@
   font-weight: 600;
 }
 
+.appointment-request-card__cancel-reason {
+  grid-column: 2 / -1;
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  background-color: #fff7f7;
+  color: #7f1d1d;
+  font-size: 13px;
+}
+
+.appointment-request-card__cancel-reason strong {
+  color: #991b1b;
+}
+
 .appointment-request-card__status {
   border-radius: 999px;
   padding: 8px 14px;
@@ -212,6 +228,124 @@
   color: #b91c1c;
 }
 
+.appointment-cancel-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.appointment-cancel-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.appointment-cancel-modal__content {
+  position: relative;
+  z-index: 1;
+  width: min(460px, calc(100% - 32px));
+  margin: 12vh auto 0;
+  border-radius: 8px;
+  padding: 24px;
+  background-color: #fff;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.24);
+}
+
+.appointment-cancel-modal__content h2 {
+  color: #0f172a;
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.appointment-cancel-modal__content p {
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.appointment-cancel-modal__summary {
+  display: grid;
+  gap: 4px;
+  margin: 18px 0;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #f8fafc;
+}
+
+.appointment-cancel-modal__summary strong {
+  color: #0f172a;
+  font-size: 15px;
+}
+
+.appointment-cancel-modal__summary span {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.appointment-cancel-modal__content label {
+  display: grid;
+  gap: 8px;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.appointment-cancel-modal__content textarea {
+  min-height: 108px;
+  width: 100%;
+  resize: vertical;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 12px;
+  color: #0f172a;
+  font: inherit;
+  font-size: 14px;
+}
+
+.appointment-cancel-modal__content textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 128, 96, 0.12);
+}
+
+.appointment-cancel-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.appointment-cancel-modal__secondary,
+.appointment-cancel-modal__danger {
+  min-height: 42px;
+  border: none;
+  border-radius: 8px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.appointment-cancel-modal__secondary {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
+.appointment-cancel-modal__danger {
+  background-color: #dc2626;
+  color: #fff;
+}
+
+.appointment-cancel-modal__secondary:disabled,
+.appointment-cancel-modal__danger:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 @media (max-width: 768px) {
   .appointments-view__header h1 {
     font-size: 28px;
@@ -242,8 +376,21 @@
     flex-direction: column;
   }
 
+  .appointment-request-card__cancel-reason {
+    grid-column: auto;
+  }
+
   .appointment-request-card__accept,
   .appointment-request-card__reject {
+    width: 100%;
+  }
+
+  .appointment-cancel-modal__actions {
+    flex-direction: column;
+  }
+
+  .appointment-cancel-modal__secondary,
+  .appointment-cancel-modal__danger {
     width: 100%;
   }
 }

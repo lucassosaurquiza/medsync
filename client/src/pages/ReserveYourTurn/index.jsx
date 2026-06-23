@@ -19,6 +19,9 @@ const categories = [
   'Traumatología'
 ]
 
+const specialistImageFallback =
+  'https://placehold.co/400x400?text=Especialista'
+
 function ReserveYourTurn () {
   const navigate = useNavigate()
 
@@ -153,11 +156,11 @@ function ReserveYourTurn () {
                   <div className='specialist-card__image-wrapper'>
                     <img
                       className='specialist-card__image'
-                      src={
-                        specialist.avatarUrl ||
-                        'https://placehold.co/400x400?text=Especialista'
-                      }
+                      src={specialist.avatarUrl || specialistImageFallback}
                       alt={`${specialist.name} ${specialist.lastName}`}
+                      onError={event => {
+                        event.currentTarget.src = specialistImageFallback
+                      }}
                     />
                   </div>
 

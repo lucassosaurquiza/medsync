@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Bell } from 'lucide-react'
 import { useSmartPolling } from '../../hooks/useSmartPolling'
 import { API_URL as API_BASE_URL } from '../../config/api'
+import { getRealtimeSocket } from '../../services/realtime'
 
 const API_URL = `${API_BASE_URL}/api/notifications`
 
@@ -64,6 +65,22 @@ function NotificationBell ({ onNotificationClick }) {
   useSmartPolling(getNotifications)
 
   useEffect(() => {
+    const socket = getRealtimeSocket()
+
+    if (!socket) return undefined
+
+    const handleNotificationsUpdated = () => {
+      getNotifications()
+    }
+
+    socket.on('notifications:updated', handleNotificationsUpdated)
+
+    return () => {
+      socket.off('notifications:updated', handleNotificationsUpdated)
+    }
+  }, [getNotifications])
+
+  useEffect(() => {
     const handleClickOutside = event => {
       if (
         notificationRef.current &&
@@ -89,7 +106,19 @@ function NotificationBell ({ onNotificationClick }) {
     }
   }
 
+  const markNotificationAsReadLocally = notificationId => {
+    setNotifications(prevNotifications =>
+      prevNotifications.map(notification =>
+        notification.id === notificationId
+          ? { ...notification, isRead: 1 }
+          : notification
+      )
+    )
+  }
+
   const handleMarkAsRead = async notificationId => {
+    markNotificationAsReadLocally(notificationId)
+
     try {
       const response = await fetch(`${API_URL}/${notificationId}/read`, {
         method: 'PATCH',
@@ -98,30 +127,35 @@ function NotificationBell ({ onNotificationClick }) {
         }
       })
 
-      if (!response.ok) return
-
-      setNotifications(prevNotifications =>
-        prevNotifications.map(notification =>
-          notification.id === notificationId
-            ? { ...notification, isRead: 1 }
-            : notification
-        )
-      )
+      if (!response.ok) {
+        getNotifications()
+      }
     } catch (error) {
       console.error('No se pudo marcar la notificacion como leida:', error)
+      getNotifications()
     }
   }
 
   const handleNotificationClick = notification => {
-    setIsOpen(false)
-    onNotificationClick?.(notification)
-
     if (!notification.isRead) {
+      markNotificationAsReadLocally(notification.id)
       handleMarkAsRead(notification.id)
     }
+
+    setIsOpen(false)
+    onNotificationClick?.(notification)
   }
 
   const handleMarkAllAsRead = async () => {
+    const previousNotifications = notifications
+
+    setNotifications(prevNotifications =>
+      prevNotifications.map(notification => ({
+        ...notification,
+        isRead: 1
+      }))
+    )
+
     try {
       const response = await fetch(`${API_URL}/read-all`, {
         method: 'PATCH',
@@ -130,16 +164,12 @@ function NotificationBell ({ onNotificationClick }) {
         }
       })
 
-      if (!response.ok) return
-
-      setNotifications(prevNotifications =>
-        prevNotifications.map(notification => ({
-          ...notification,
-          isRead: 1
-        }))
-      )
+      if (!response.ok) {
+        setNotifications(previousNotifications)
+      }
     } catch (error) {
       console.error('No se pudieron marcar las notificaciones:', error)
+      setNotifications(previousNotifications)
     }
   }
 

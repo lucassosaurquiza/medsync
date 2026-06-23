@@ -3,7 +3,7 @@ import './styles.css'
 import toast from 'react-hot-toast'
 import { MapPin } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { AppointmentCalendar } from '../../components/Appointment/AppointmentCalendar'
 import { AppointmentConfirmationModal } from '../../components/AppointmentConfirmationModal'
 import { TimeSlots } from '../../components/Appointment/TimeSlots'
@@ -40,6 +40,7 @@ const formatDateForApi = date => {
 
 function AppointmentBooking () {
   const { specialistId } = useParams()
+  const navigate = useNavigate()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [createdAppointment, setCreatedAppointment] = useState(null)
@@ -183,6 +184,15 @@ function AppointmentBooking () {
   const handleCreateAppointment = async () => {
     if (isSubmitting) return
 
+    const token = localStorage.getItem('token')
+    const user = JSON.parse(localStorage.getItem('user') || 'null')
+
+    if (!token || user?.role !== 'patient') {
+      toast('Creá una cuenta de paciente para confirmar tu reserva')
+      navigate('/register')
+      return
+    }
+
     if (!specialist) {
       toast.error('No se pudo identificar al especialista')
       return
@@ -204,8 +214,6 @@ function AppointmentBooking () {
     }
 
     setIsSubmitting(true)
-
-    const token = localStorage.getItem('token')
 
     try {
       const patientResponse = await fetch(

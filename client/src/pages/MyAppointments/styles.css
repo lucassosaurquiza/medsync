@@ -164,6 +164,22 @@
   color: #94a3b8;
 }
 
+.appointment-card__cancel-reason {
+  grid-column: 2 / -1;
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  background-color: #fff7f7;
+  color: #7f1d1d;
+  font-size: 13px;
+}
+
+.appointment-card__cancel-reason strong {
+  color: #991b1b;
+}
+
 .appointment-card__avatar {
   width: 58px;
   height: 58px;
@@ -278,5 +294,9 @@
 
   .appointment-card__cancel {
     width: 100%;
+  }
+
+  .appointment-card__cancel-reason {
+    grid-column: auto;
   }
 }

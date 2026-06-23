@@ -1,21 +1,52 @@
 import './styles.css'
 
-import { useState } from 'react'
-import { Menu, X } from 'lucide-react'
-import { NavLink } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { LogOut, Menu, X } from 'lucide-react'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { LoginButton } from '../LogInButton'
 import { NotificationBell } from '../NotificationBell'
 import { RegisterButton } from '../RegisterButton'
+import { disconnectRealtimeSocket } from '../../services/realtime'
 
 function Header () {
+  const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem('user'))
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
+  const profileMenuRef = useRef(null)
 
   const handleLogout = () => {
+    disconnectRealtimeSocket()
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     window.location.href = '/'
   }
+
+  const handleNotificationClick = () => {
+    if (user?.role === 'specialist') {
+      navigate('/dashboard')
+      return
+    }
+
+    navigate('/my-appointments')
+  }
+
+  useEffect(() => {
+    const handleClickOutside = event => {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target)
+      ) {
+        setIsProfileMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   return (
     <header className='header'>
@@ -84,19 +115,40 @@ function Header () {
           </>
         ) : (
           <div className='header-user'>
-            <NotificationBell />
+            <NotificationBell onNotificationClick={handleNotificationClick} />
 
-            <div className='header-user__avatar'>
-              {user.name?.charAt(0).toUpperCase()}
+            <div className='header-user__profile' ref={profileMenuRef}>
+              <button
+                className='header-user__avatar-button'
+                type='button'
+                onClick={() => setIsProfileMenuOpen(isOpen => !isOpen)}
+                aria-expanded={isProfileMenuOpen}
+                aria-label='Abrir menu de perfil'
+                title='Perfil'
+              >
+                {user.name?.charAt(0).toUpperCase()}
+              </button>
+
+              {isProfileMenuOpen && (
+                <div className='header-user-menu'>
+                  <div className='header-user-menu__summary'>
+                    <strong>
+                      {user.name} {user.lastName}
+                    </strong>
+                    <span>{user.email}</span>
+                  </div>
+
+                  <button
+                    className='header-user-menu__logout'
+                    type='button'
+                    onClick={handleLogout}
+                  >
+                    <LogOut size={18} />
+                    Salir
+                  </button>
+                </div>
+              )}
             </div>
-
-            <button
-              className='header-user__logout'
-              type='button'
-              onClick={handleLogout}
-            >
-              Salir
-            </button>
           </div>
         )}
       </nav>

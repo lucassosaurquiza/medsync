@@ -15,6 +15,8 @@ function AppointmentsView () {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [updatingAppointmentId, setUpdatingAppointmentId] = useState(null)
+  const [appointmentToCancel, setAppointmentToCancel] = useState(null)
+  const [cancellationReason, setCancellationReason] = useState('')
 
   const getStatusText = status =>
     ({
@@ -75,8 +77,31 @@ function AppointmentsView () {
     fetchAppointments()
   }
 
-  const updateAppointmentStatus = async (appointmentId, status) => {
+  const closeCancellationModal = () => {
     if (updatingAppointmentId !== null) return
+
+    setAppointmentToCancel(null)
+    setCancellationReason('')
+  }
+
+  const openCancellationModal = appointment => {
+    setAppointmentToCancel(appointment)
+    setCancellationReason('')
+  }
+
+  const updateAppointmentStatus = async (
+    appointmentId,
+    status,
+    reason = ''
+  ) => {
+    if (updatingAppointmentId !== null) return
+
+    const normalizedReason = reason.trim()
+
+    if (status === 'cancelled' && normalizedReason.length < 5) {
+      toast.error('Ingresá un motivo de al menos 5 caracteres')
+      return
+    }
 
     setUpdatingAppointmentId(appointmentId)
 
@@ -91,7 +116,11 @@ function AppointmentsView () {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ status })
+        body: JSON.stringify({
+          status,
+          cancellationReason:
+            status === 'cancelled' ? normalizedReason : undefined
+        })
       })
 
       const data = await response.json()
@@ -103,10 +132,23 @@ function AppointmentsView () {
       setAppointments(prevAppointments =>
         prevAppointments.map(appointment =>
           appointment.id === appointmentId
-            ? { ...appointment, status }
+            ? {
+                ...appointment,
+                status,
+                cancellationReason:
+                  status === 'cancelled'
+                    ? normalizedReason
+                    : appointment.cancellationReason
+              }
             : appointment
         )
       )
+
+      if (status === 'cancelled') {
+        setSelectedStatus('cancelled')
+        setAppointmentToCancel(null)
+        setCancellationReason('')
+      }
     } catch (error) {
       toast.error(error.message)
     } finally {
@@ -119,6 +161,16 @@ function AppointmentsView () {
       appointment => appointment.status === selectedStatus
     )
   }, [appointments, selectedStatus])
+
+  const confirmCancellation = () => {
+    if (!appointmentToCancel) return
+
+    updateAppointmentStatus(
+      appointmentToCancel.id,
+      'cancelled',
+      cancellationReason
+    )
+  }
 
   return (
     <section className='appointments-view'>
@@ -209,28 +261,38 @@ function AppointmentsView () {
                   </div>
                 </div>
 
-                {appointment.status === 'pending' && (
+                {appointment.status === 'cancelled' && appointment.cancellationReason && (
+                  <div className='appointment-request-card__cancel-reason'>
+                    <strong>Motivo de cancelacion:</strong>
+                    <span>{appointment.cancellationReason}</span>
+                  </div>
+                )}
+
+                {(appointment.status === 'pending' ||
+                  appointment.status === 'confirmed') && (
                   <div className='appointment-request-card__actions'>
-                    <button
-                      className='appointment-request-card__accept'
-                      disabled={updatingAppointmentId !== null}
-                      type='button'
-                      onClick={() =>
-                        updateAppointmentStatus(appointment.id, 'confirmed')
-                      }
-                    >
-                      Aceptar
-                    </button>
+                    {appointment.status === 'pending' && (
+                      <button
+                        className='appointment-request-card__accept'
+                        disabled={updatingAppointmentId !== null}
+                        type='button'
+                        onClick={() =>
+                          updateAppointmentStatus(appointment.id, 'confirmed')
+                        }
+                      >
+                        Aceptar
+                      </button>
+                    )}
 
                     <button
                       className='appointment-request-card__reject'
                       disabled={updatingAppointmentId !== null}
                       type='button'
-                      onClick={() =>
-                        updateAppointmentStatus(appointment.id, 'cancelled')
-                      }
+                      onClick={() => openCancellationModal(appointment)}
                     >
-                      Rechazar
+                      {appointment.status === 'pending'
+                        ? 'Rechazar'
+                        : 'Cancelar'}
                     </button>
                   </div>
                 )}
@@ -238,6 +300,70 @@ function AppointmentsView () {
             ))
           )}
         </section>
+      )}
+
+      {appointmentToCancel && (
+        <div className='appointment-cancel-modal'>
+          <div
+            className='appointment-cancel-modal__overlay'
+            onClick={closeCancellationModal}
+          />
+
+          <section className='appointment-cancel-modal__content'>
+            <h2>
+              {appointmentToCancel.status === 'pending'
+                ? 'Rechazar turno'
+                : 'Cancelar turno'}
+            </h2>
+
+            <p>
+              Indicá el motivo para que el paciente entienda qué ocurrió.
+            </p>
+
+            <div className='appointment-cancel-modal__summary'>
+              <strong>
+                {getPatientFullName(appointmentToCancel) ||
+                  'Paciente sin nombre'}
+              </strong>
+              <span>
+                {appointmentToCancel.date} · {appointmentToCancel.time}
+              </span>
+            </div>
+
+            <label>
+              Motivo
+              <textarea
+                value={cancellationReason}
+                onChange={event => setCancellationReason(event.target.value)}
+                placeholder='Ej: No podré atender en ese horario.'
+                maxLength={255}
+                autoFocus
+              />
+            </label>
+
+            <div className='appointment-cancel-modal__actions'>
+              <button
+                type='button'
+                className='appointment-cancel-modal__secondary'
+                onClick={closeCancellationModal}
+                disabled={updatingAppointmentId !== null}
+              >
+                Volver
+              </button>
+
+              <button
+                type='button'
+                className='appointment-cancel-modal__danger'
+                onClick={confirmCancellation}
+                disabled={updatingAppointmentId !== null}
+              >
+                {updatingAppointmentId !== null
+                  ? 'Procesando...'
+                  : 'Confirmar'}
+              </button>
+            </div>
+          </section>
+        </div>
       )}
     </section>
   )

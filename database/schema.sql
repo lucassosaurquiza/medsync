@@ -30,6 +30,7 @@ CREATE TABLE `appointments` (
   `time` time NOT NULL,
   `healthInsurance` varchar(100) DEFAULT NULL,
   `reason` text,
+  `cancellationReason` varchar(255) DEFAULT NULL,
   `status` enum('pending','confirmed','cancelled') DEFAULT 'pending',
   `activeSlot` tinyint GENERATED ALWAYS AS ((case when (`status` in (_utf8mb4'pending',_utf8mb4'confirmed')) then 1 else NULL end)) STORED,
   PRIMARY KEY (`id`),

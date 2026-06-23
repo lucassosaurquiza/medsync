@@ -1,10 +1,11 @@
 import './styles.css'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
 import { API_URL as API_BASE_URL } from '../../../../config/api'
 
 const API_URL = `${API_BASE_URL}/api/specialists/me`
+const MAX_AVATAR_SIZE = 5 * 1024 * 1024
 
 const emptyProfile = {
   name: '',
@@ -35,6 +36,9 @@ function SettingsView () {
   const [isSaving, setIsSaving] = useState(false)
   const [loadError, setLoadError] = useState('')
   const [reloadKey, setReloadKey] = useState(0)
+  const [avatarFile, setAvatarFile] = useState(null)
+  const [avatarPreview, setAvatarPreview] = useState('')
+  const avatarInputRef = useRef(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -94,9 +98,49 @@ function SettingsView () {
     }))
   }
 
+  const handleAvatarChange = event => {
+    const file = event.target.files?.[0]
+
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('El archivo debe ser una imagen')
+      return
+    }
+
+    if (file.size > MAX_AVATAR_SIZE) {
+      toast.error('La imagen no puede superar los 5MB')
+      return
+    }
+
+    setAvatarFile(file)
+
+    if (avatarPreview) {
+      URL.revokeObjectURL(avatarPreview)
+    }
+
+    setAvatarPreview(URL.createObjectURL(file))
+  }
+
+  const openAvatarSelector = () => {
+    avatarInputRef.current?.click()
+  }
+
   const handleReset = () => {
     setProfile(originalProfile)
+    setAvatarFile(null)
+
+    if (avatarPreview) {
+      URL.revokeObjectURL(avatarPreview)
+      setAvatarPreview('')
+    }
   }
+
+  useEffect(() => () => {
+    if (avatarPreview) {
+      URL.revokeObjectURL(avatarPreview)
+    }
+  }, [avatarPreview])
 
   const handleSubmit = async event => {
     event.preventDefault()
@@ -107,13 +151,38 @@ function SettingsView () {
 
     try {
       const token = localStorage.getItem('token')
+      let profileToSave = profile
+
+      if (avatarFile) {
+        const formData = new FormData()
+        formData.append('avatar', avatarFile)
+
+        const avatarResponse = await fetch(`${API_URL}/avatar`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          body: formData
+        })
+        const avatarData = await avatarResponse.json()
+
+        if (!avatarResponse.ok) {
+          throw new Error(avatarData.message || 'No se pudo subir la imagen')
+        }
+
+        profileToSave = {
+          ...profile,
+          avatarUrl: avatarData.avatarUrl
+        }
+      }
+
       const response = await fetch(API_URL, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(profile)
+        body: JSON.stringify(profileToSave)
       })
       const data = await response.json()
 
@@ -122,12 +191,18 @@ function SettingsView () {
       }
 
       const nextProfile = {
-        ...profile,
+        ...profileToSave,
         ...data.profile
       }
 
       setProfile(nextProfile)
       setOriginalProfile(nextProfile)
+      setAvatarFile(null)
+
+      if (avatarPreview) {
+        URL.revokeObjectURL(avatarPreview)
+        setAvatarPreview('')
+      }
 
       const storedUser = JSON.parse(localStorage.getItem('user'))
 
@@ -250,16 +325,44 @@ function SettingsView () {
             />
           </label>
 
-          <label>
-            URL de imagen
-            <input
-              name='avatarUrl'
-              type='url'
-              value={profile.avatarUrl}
-              onChange={handleChange}
-              placeholder='https://...'
-            />
-          </label>
+          <div className='settings-form__avatar'>
+            <div className='settings-form__avatar-preview'>
+              {avatarPreview || profile.avatarUrl ? (
+                <img
+                  src={avatarPreview || profile.avatarUrl}
+                  alt='Foto profesional'
+                />
+              ) : (
+                <span>{profile.name?.charAt(0).toUpperCase() || 'M'}</span>
+              )}
+            </div>
+
+            <label className='settings-form__avatar-upload'>
+              Foto profesional
+              <input
+                ref={avatarInputRef}
+                className='settings-form__avatar-input'
+                type='file'
+                accept='image/*'
+                onChange={handleAvatarChange}
+              />
+              <div className='settings-form__avatar-controls'>
+                <button
+                  type='button'
+                  className='settings-form__avatar-button'
+                  onClick={openAvatarSelector}
+                >
+                  Cambiar foto
+                </button>
+
+                <span>
+                  {avatarFile?.name ||
+                    (profile.avatarUrl ? 'Imagen cargada' : 'Sin imagen')}
+                </span>
+              </div>
+              <small>JPG, PNG o WebP. Maximo 5MB.</small>
+            </label>
+          </div>
         </div>
 
         <div className='settings-form__actions'>

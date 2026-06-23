@@ -1,4 +1,43 @@
+const { v2: cloudinary } = require('cloudinary')
 const pool = require('../config/db')
+
+const hasCloudinaryConfig = () => (
+  process.env.CLOUDINARY_CLOUD_NAME &&
+  process.env.CLOUDINARY_API_KEY &&
+  process.env.CLOUDINARY_API_SECRET
+)
+
+const uploadBufferToCloudinary = (buffer, publicId) => new Promise(
+  (resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        public_id: publicId,
+        overwrite: true,
+        resource_type: 'image',
+        transformation: [
+          {
+            width: 800,
+            height: 800,
+            crop: 'fill',
+            gravity: 'face',
+            quality: 'auto',
+            fetch_format: 'auto'
+          }
+        ]
+      },
+      (error, result) => {
+        if (error) {
+          reject(error)
+          return
+        }
+
+        resolve(result)
+      }
+    )
+
+    uploadStream.end(buffer)
+  }
+)
 
 // CREAR ESPECIALISTA
 const createSpecialist = async (req, res) => {
@@ -331,6 +370,52 @@ const updateMyProfile = async (req, res) => {
   }
 }
 
+const uploadMyAvatar = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({
+      message: 'La imagen es obligatoria'
+    })
+  }
+
+  if (!hasCloudinaryConfig()) {
+    return res.status(503).json({
+      message: 'La carga de imagenes no esta configurada'
+    })
+  }
+
+  try {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET
+    })
+
+    const uploadResult = await uploadBufferToCloudinary(
+      req.file.buffer,
+      `medsync/specialists/${req.user.id}`
+    )
+
+    await pool.query(
+      `
+      UPDATE specialists
+      SET avatarUrl = ?
+      WHERE userId = ?
+      `,
+      [uploadResult.secure_url, req.user.id]
+    )
+
+    return res.json({
+      avatarUrl: uploadResult.secure_url
+    })
+  } catch (error) {
+    console.error('Error al subir imagen del especialista:', error)
+
+    return res.status(500).json({
+      message: 'No se pudo subir la imagen'
+    })
+  }
+}
+
 // ACTUALIZAR ESPECIALISTA
 const updateSpecialist = async (req, res) => {
   const { id } = req.params
@@ -417,6 +502,7 @@ module.exports = {
   getSpecialistsById,
   getMyProfile,
   updateMyProfile,
+  uploadMyAvatar,
   updateSpecialist,
   deleteSpecialist
 }

@@ -101,8 +101,14 @@ app.use(cors({
 app.use(express.json({ limit: '100kb' }))
 app.use((req, res, next) => {
   const methodsWithBody = ['POST', 'PUT', 'PATCH']
+  const isMultipartRoute =
+    req.method === 'POST' && req.path === '/api/specialists/me/avatar'
 
-  if (methodsWithBody.includes(req.method) && !req.is('application/json')) {
+  if (
+    methodsWithBody.includes(req.method) &&
+    !isMultipartRoute &&
+    !req.is('application/json')
+  ) {
     return res.status(415).json({
       message: 'Content-Type debe ser application/json'
     })
@@ -163,6 +169,18 @@ app.use((error, req, res, next) => {
   if (error.type === 'entity.too.large') {
     return res.status(413).json({
       message: 'La solicitud es demasiado grande'
+    })
+  }
+
+  if (error.code === 'LIMIT_FILE_SIZE') {
+    return res.status(413).json({
+      message: 'La imagen no puede superar los 5MB'
+    })
+  }
+
+  if (error.statusCode) {
+    return res.status(error.statusCode).json({
+      message: error.message
     })
   }
 

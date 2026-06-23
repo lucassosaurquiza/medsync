@@ -1,5 +1,6 @@
 require('dotenv').config()
 
+const http = require('node:http')
 const requiredEnvironmentVariables = [
   'DB_HOST',
   'DB_USER',
@@ -26,6 +27,7 @@ if (
 
 const app = require('./app')
 const pool = require('./config/db')
+const { initializeRealtime } = require('./realtime/socket')
 
 const PORT = process.env.PORT || 3000
 let server
@@ -40,7 +42,10 @@ const startServer = async () => {
     connection.release()
     log('info', 'database_connected')
 
-    server = app.listen(PORT, () => {
+    server = http.createServer(app)
+    initializeRealtime(server)
+
+    server.listen(PORT, () => {
       log('info', 'server_started', { port: Number(PORT) })
     })
   } catch (error) {
