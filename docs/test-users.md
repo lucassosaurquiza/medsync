@@ -2,10 +2,10 @@
 
 ## Patient
 
-Email: patient@test.com  
-Password: 123456
+Email: paciente@gmail.com 
+Password: p12345678
 
 ## Specialist
 
-Email: doctor@test.com  
-Password: 123456
+Email: especialista@gmail.com  
+Password: e12345678

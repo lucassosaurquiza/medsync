@@ -2,7 +2,7 @@
 
 ## Base de datos
 
-Se utilizará PostgreSQL.
+Se utilizará MySql.
 
 Motivos:
 

@@ -17,6 +17,7 @@ const getMyNotifications = async (req, res) => {
         created_at
       FROM notifications
       WHERE userId = ?
+        AND isRead = FALSE
       ORDER BY created_at DESC
       LIMIT 50
       `,
