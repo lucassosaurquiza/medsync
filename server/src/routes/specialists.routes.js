@@ -7,6 +7,7 @@ const roleMiddleware = require('../middlewares/role.middleware')
 
 const {
   getSpecialists,
+  getSpecialties,
   getSpecialistsById,
   getMyProfile,
   updateMyProfile,
@@ -31,6 +32,7 @@ const avatarUpload = multer({
 })
 
 router.get("/", getSpecialists);
+router.get('/specialties', getSpecialties)
 router.get('/me', authMiddleware, roleMiddleware('specialist'), getMyProfile)
 router.put('/me', authMiddleware, roleMiddleware('specialist'), updateMyProfile)
 router.post(

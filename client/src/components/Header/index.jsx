@@ -107,50 +107,52 @@ function Header () {
           </NavLink>
         )}
 
-        {!user ? (
+        {!user && (
           <>
             <LoginButton />
             <RegisterButton />
           </>
-        ) : (
-          <div className='header-user'>
-            <NotificationBell onNotificationClick={handleNotificationClick} />
-
-            <div className='header-user__profile' ref={profileMenuRef}>
-              <button
-                className='header-user__avatar-button'
-                type='button'
-                onClick={() => setIsProfileMenuOpen(isOpen => !isOpen)}
-                aria-expanded={isProfileMenuOpen}
-                aria-label='Abrir menu de perfil'
-                title='Perfil'
-              >
-                {user.name?.charAt(0).toUpperCase()}
-              </button>
-
-              {isProfileMenuOpen && (
-                <div className='header-user-menu'>
-                  <div className='header-user-menu__summary'>
-                    <strong>
-                      {user.name} {user.lastName}
-                    </strong>
-                    <span>{user.email}</span>
-                  </div>
-
-                  <button
-                    className='header-user-menu__logout'
-                    type='button'
-                    onClick={handleLogout}
-                  >
-                    <LogOut size={18} />
-                    Salir
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
         )}
       </nav>
+
+      {user && (
+        <div className='header-user'>
+          <NotificationBell onNotificationClick={handleNotificationClick} />
+
+          <div className='header-user__profile' ref={profileMenuRef}>
+            <button
+              className='header-user__avatar-button'
+              type='button'
+              onClick={() => setIsProfileMenuOpen(isOpen => !isOpen)}
+              aria-expanded={isProfileMenuOpen}
+              aria-label='Abrir menu de perfil'
+              title='Perfil'
+            >
+              {user.name?.charAt(0).toUpperCase()}
+            </button>
+
+            {isProfileMenuOpen && (
+              <div className='header-user-menu'>
+                <div className='header-user-menu__summary'>
+                  <strong>
+                    {user.name} {user.lastName}
+                  </strong>
+                  <span>{user.email}</span>
+                </div>
+
+                <button
+                  className='header-user-menu__logout'
+                  type='button'
+                  onClick={handleLogout}
+                >
+                  <LogOut size={18} />
+                  Salir
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <button
         className='header-button'

@@ -8,18 +8,6 @@ import { Footer } from '../../components/Footer'
 import { MainLayout } from '../../layouts/MainLayout'
 import { API_URL } from '../../config/api'
 
-const categories = [
-  'Todos',
-  'Cardiología',
-  'Dermatología',
-  'Pediatría',
-  'Ginecología',
-  'Neurología',
-  'Nutrición',
-  'Traumatología',
-  'Kinesiologia'
-]
-
 const specialistImageFallback =
   'https://placehold.co/400x400?text=Especialista'
 
@@ -27,11 +15,34 @@ function ReserveYourTurn () {
   const navigate = useNavigate()
 
   const [specialists, setSpecialists] = useState([])
+  const [categories, setCategories] = useState(['Todos'])
   const [search, setSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('Todos')
   const [sortBy, setSortBy] = useState('relevance')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    const getSpecialties = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/specialists/specialties`)
+
+        if (!response.ok) {
+          throw new Error('No se pudieron obtener las especialidades')
+        }
+
+        const data = await response.json()
+        const specialties = Array.isArray(data) ? data : []
+
+        setCategories(['Todos', ...specialties])
+      } catch (error) {
+        console.error(error)
+        setCategories(['Todos'])
+      }
+    }
+
+    getSpecialties()
+  }, [])
 
   useEffect(() => {
     const getSpecialists = async () => {
@@ -61,7 +72,6 @@ function ReserveYourTurn () {
 
         const data = await response.json()
 
-        console.log('Especialistas desde API:', data)
         setSpecialists(data)
       } catch (error) {
         setError(error.message)
@@ -83,7 +93,7 @@ function ReserveYourTurn () {
       <MainLayout>
         <main className='reserve-turn'>
           <section className='reserve-turn__hero'>
-            <h1 className='reserve-turn__title'>Encontrá a tu especialista</h1>
+            <h1 className='reserve-turn__title'>Encontra a tu especialista</h1>
 
             <div className='reserve-turn__search'>
               <div className='reserve-turn__search-box'>
@@ -97,7 +107,6 @@ function ReserveYourTurn () {
                   onChange={event => setSearch(event.target.value)}
                 />
               </div>
-
             </div>
 
             <div className='reserve-turn__categories'>
@@ -132,7 +141,7 @@ function ReserveYourTurn () {
                   value={sortBy}
                   onChange={event => setSortBy(event.target.value)}
                 >
-                  <option value='relevance'>Más relevantes</option>
+                  <option value='relevance'>Mas relevantes</option>
                   <option value='rating'>Mejor valorados</option>
                   <option value='lowerPrice'>Menor precio</option>
                   <option value='higherPrice'>Mayor precio</option>
@@ -175,7 +184,7 @@ function ReserveYourTurn () {
                     </p>
 
                     <p className='specialist-card__license'>
-                      Matrícula {specialist.professionalLicense}
+                      Matricula {specialist.professionalLicense}
                     </p>
 
                     <div className='specialist-card__location'>
@@ -201,7 +210,6 @@ function ReserveYourTurn () {
                 </article>
               ))}
             </div>
-
           </section>
         </main>
       </MainLayout>

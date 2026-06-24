@@ -150,3 +150,19 @@
   font-weight: 700;
   text-transform: capitalize;
 }
+
+@media (max-width: 799px) {
+  .notifications-dropdown {
+    position: fixed;
+    top: 86px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-height: calc(100dvh - 106px);
+    z-index: 1000;
+  }
+
+  .notifications-dropdown__list {
+    max-height: calc(100dvh - 180px);
+  }
+}

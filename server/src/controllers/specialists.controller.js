@@ -164,6 +164,28 @@ const getSpecialists = async (req, res) => {
   }
 }
 
+const getSpecialties = async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      `
+      SELECT DISTINCT specialty
+      FROM specialists
+      WHERE specialty IS NOT NULL
+        AND specialty <> ''
+      ORDER BY specialty ASC
+      `
+    )
+
+    res.json(rows.map(row => row.specialty))
+  } catch (error) {
+    console.error('Error al obtener especialidades:', error)
+
+    res.status(500).json({
+      message: 'Error al obtener especialidades'
+    })
+  }
+}
+
 // OBTENER ESPECIALISTA POR ID
 const getSpecialistsById = async (req, res) => {
   const { id } = req.params
@@ -499,6 +521,7 @@ const deleteSpecialist = async (req, res) => {
 module.exports = {
   createSpecialist,
   getSpecialists,
+  getSpecialties,
   getSpecialistsById,
   getMyProfile,
   updateMyProfile,
