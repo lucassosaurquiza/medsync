@@ -28,6 +28,7 @@ function NotificationBell ({ onNotificationClick }) {
   const [notifications, setNotifications] = useState([])
   const [isOpen, setIsOpen] = useState(false)
   const notificationRef = useRef(null)
+  const isOpenRef = useRef(false)
 
   const unreadCount = notifications.filter(
     notification => !notification.isRead
@@ -52,11 +53,26 @@ function NotificationBell ({ onNotificationClick }) {
           )
         }
 
-        setNotifications(Array.isArray(data) ? data : [])
+        const nextNotifications = Array.isArray(data) ? data : []
+
+        setNotifications(prevNotifications => {
+          const shouldKeepVisibleNotifications =
+            isOpenRef.current &&
+            nextNotifications.length === 0 &&
+            prevNotifications.some(notification => notification.isRead)
+
+          return shouldKeepVisibleNotifications
+            ? prevNotifications
+            : nextNotifications
+        })
+
+        return nextNotifications
       } catch (error) {
         if (error.name !== 'AbortError') {
           console.error(error)
         }
+
+        return []
       }
     },
     [token]
@@ -81,6 +97,10 @@ function NotificationBell ({ onNotificationClick }) {
   }, [getNotifications])
 
   useEffect(() => {
+    isOpenRef.current = isOpen
+  }, [isOpen])
+
+  useEffect(() => {
     const handleClickOutside = event => {
       if (
         notificationRef.current &&
@@ -97,22 +117,25 @@ function NotificationBell ({ onNotificationClick }) {
     }
   }, [])
 
-  const handleToggleNotifications = () => {
+  const handleToggleNotifications = async () => {
     const nextIsOpen = !isOpen
     setIsOpen(nextIsOpen)
 
     if (nextIsOpen) {
-      getNotifications()
+      const loadedNotifications = await getNotifications()
+
+      if (loadedNotifications.length > 0) {
+        handleMarkAllAsRead({
+          keepVisible: true,
+          currentNotifications: loadedNotifications
+        })
+      }
     }
   }
 
   const markNotificationAsReadLocally = notificationId => {
     setNotifications(prevNotifications =>
-      prevNotifications.map(notification =>
-        notification.id === notificationId
-          ? { ...notification, isRead: 1 }
-          : notification
-      )
+      prevNotifications.filter(notification => notification.id !== notificationId)
     )
   }
 
@@ -123,8 +146,10 @@ function NotificationBell ({ onNotificationClick }) {
       const response = await fetch(`${API_URL}/${notificationId}/read`, {
         method: 'PATCH',
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
       })
 
       if (!response.ok) {
@@ -146,22 +171,31 @@ function NotificationBell ({ onNotificationClick }) {
     onNotificationClick?.(notification)
   }
 
-  const handleMarkAllAsRead = async () => {
-    const previousNotifications = notifications
+  const handleMarkAllAsRead = async ({
+    keepVisible = false,
+    currentNotifications = notifications
+  } = {}) => {
+    const previousNotifications = currentNotifications
 
-    setNotifications(prevNotifications =>
-      prevNotifications.map(notification => ({
-        ...notification,
-        isRead: 1
-      }))
+    if (previousNotifications.length === 0) return
+
+    setNotifications(
+      keepVisible
+        ? previousNotifications.map(notification => ({
+          ...notification,
+          isRead: true
+        }))
+        : []
     )
 
     try {
       const response = await fetch(`${API_URL}/read-all`, {
         method: 'PATCH',
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
       })
 
       if (!response.ok) {

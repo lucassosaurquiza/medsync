@@ -16,7 +16,8 @@ const categories = [
   'Ginecología',
   'Neurología',
   'Nutrición',
-  'Traumatología'
+  'Traumatología',
+  'Kinesiologia'
 ]
 
 const specialistImageFallback =

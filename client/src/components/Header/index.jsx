@@ -2,14 +2,13 @@ import './styles.css'
 
 import { useEffect, useRef, useState } from 'react'
 import { LogOut, Menu, X } from 'lucide-react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { LoginButton } from '../LogInButton'
 import { NotificationBell } from '../NotificationBell'
 import { RegisterButton } from '../RegisterButton'
 import { disconnectRealtimeSocket } from '../../services/realtime'
 
 function Header () {
-  const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem('user'))
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
@@ -24,11 +23,11 @@ function Header () {
 
   const handleNotificationClick = () => {
     if (user?.role === 'specialist') {
-      navigate('/dashboard')
+      window.location.href = '/dashboard'
       return
     }
 
-    navigate('/my-appointments')
+    window.location.href = '/my-appointments'
   }
 
   useEffect(() => {
