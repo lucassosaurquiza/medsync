@@ -1,0 +1,50 @@
+:root {
+  --color-primary: #006C49;
+  --color-secondary: #374151;
+  --color-tertiary: #6366F1;
+  --color-neutral: #6366F1;
+  --color-bg: #F1F3FF;
+  --color-text: #1f2937;
+  --color-muted: #b2b9c6;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+   /* Layout */
+  --container-width: 1180px;
+
+  /* Font Family */
+  --font-family-sans: 'Inter', -apple-system, sans-serif;
+
+/* Font Sizes */
+--font-display: 2.75rem;      /* 44px */
+--font-h1: 2rem;              /* 32px */
+--font-h2: 1.625rem;          /* 26px */
+--font-h3: 1.25rem;           /* 20px */
+--font-h4: 1rem;              /* 16px */
+--font-body-lg: 0.875rem;     /* 14px */
+--font-body: 0.75rem;         /* 12px */
+--font-small: 0.625rem;       /* 10px */
+--font-caption: 0.5rem;       /* 8px */
+
+   /* Font Weights */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+

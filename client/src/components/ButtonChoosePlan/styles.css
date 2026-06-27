@@ -1,0 +1,16 @@
+.choose-plan {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  width: 100%;
+  max-width: 300px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #007f68;
+  color: #ffffff;
+  font-size: var(--font-h4);
+  font-weight: 700;
+  cursor: pointer;
+}

@@ -1,0 +1,53 @@
+.navbar-container {
+  width: 100%;
+  padding: 20px 24px;
+  background: #f4f4f8;
+  border-bottom: 1px solid #e4e4e7;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.reserve-turn__title {
+  color: var(--color-primary);
+  font-size: var(--font-h1);
+}
+
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.notification-btn {
+  width: 42px;
+  height: 42px;
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  color: #4b5563;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.2s;
+}
+
+.notification-btn:hover {
+  transform: scale(1.08);
+  color: #00755e;
+}
+
+.profile-image {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #d1d5db;
+}

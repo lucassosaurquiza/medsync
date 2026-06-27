@@ -1,0 +1,43 @@
+.testimonials-carrousel {
+  border-radius: 16px;
+  background-color: var(--color-primary);
+  overflow: hidden;
+}
+
+.testimonials-carrousel__track {
+  display: flex;
+  transition: transform 0.45s ease;
+  will-change: transform;
+}
+
+.testimonials-carrousel__slide {
+  flex: 0 0 100%;
+}
+
+.testimonials-carrousel__indicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1rem;
+}
+
+.testimonials-carrousel__indicator {
+  width: 10px;
+  height: 10px;
+  border: none;
+  border-radius: 999px;
+  background-color: var(--color-muted);
+  cursor: pointer;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.testimonials-carrousel__indicator--active {
+  width: 36px;
+  background-color: white;
+}
+
+.testimonials-carrousel__indicator:focus {
+  outline: 3px solid rgba(255, 255, 255, 0.35);
+  outline-offset: 3px;
+}

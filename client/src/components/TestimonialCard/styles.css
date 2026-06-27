@@ -1,0 +1,36 @@
+.testimonial-card {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  background-color: #1A7B5C;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+}
+
+.testimonial-card__quote {
+  display: block;
+  margin-top: 24px;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.testimonial-card__rating {
+  display: flex;
+  gap: 4px;
+  margin-top: 16px;
+  color: #6FFBBE;
+}
+
+.testimonial-card__comment {
+  color: white;
+  font-size: var(--font-h4);
+}
+
+@media (min-width: 768px) {
+  .testimonial-card {
+    flex: 0 0 420px;
+  }
+}

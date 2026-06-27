@@ -1,0 +1,60 @@
+.desktop-sidebar {
+  width: 240px;
+  padding: 24px;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-logo {
+  color: #007f68;
+  margin-bottom: 32px;
+}
+
+.desktop-doctor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.desktop-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #dbeafe;
+}
+
+.desktop-doctor p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.desktop-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.desktop-menu button {
+  border: none;
+  background: transparent;
+  padding: 14px;
+  text-align: left;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.desktop-menu .active {
+  background: #dbeafe;
+}
+
+.desktop-new-turn {
+  margin-top: auto;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  background: #007f68;
+  color: white;
+  cursor: pointer;
+}

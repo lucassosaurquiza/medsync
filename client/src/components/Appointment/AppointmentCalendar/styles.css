@@ -1,0 +1,110 @@
+.calendar {
+  width: 100%;
+}
+
+.calendar__title {
+  font-size: var(--font-body);
+  font-weight: var(--weight-bold);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+}
+
+.calendar__daypicker {
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.calendar__daypicker.rdp-root {
+  --rdp-accent-color: var(--color-primary);
+  --rdp-accent-background-color: rgba(0, 128, 96, 0.12);
+  --rdp-day_button-width: 44px;
+  --rdp-day_button-height: 44px;
+  --rdp-day_button-border-radius: 12px;
+  --rdp-today-color: var(--color-primary);
+  --rdp-outside-opacity: 0.35;
+  --rdp-disabled-opacity: 0.25;
+  --rdp-nav_button-width: 36px;
+  --rdp-nav_button-height: 36px;
+}
+
+.calendar__daypicker .rdp-month_caption {
+  font-size: var(--font-h4);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+}
+
+.calendar__daypicker .rdp-weekday {
+  color: var(--color-secondary);
+  font-weight: var(--weight-bold);
+}
+
+.calendar__daypicker .rdp-day_button {
+  font-size: var(--font-body);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: auto;
+}
+
+.calendar__daypicker .rdp-day_button:hover {
+  background-color: rgba(0, 128, 96, 0.08);
+  color: var(--color-primary);
+}
+
+.calendar__daypicker .rdp-selected .rdp-day_button {
+  background-color: var(--color-primary);
+  color: #fff;
+  font-weight: var(--weight-bold);
+}
+
+.calendar__daypicker .rdp-disabled .rdp-day_button {
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.calendar__daypicker .rdp-months,
+.calendar__daypicker .rdp-month,
+.calendar__daypicker .rdp-month_grid,
+.calendar__daypicker .rdp-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.calendar__daypicker .rdp-weekday,
+.calendar__daypicker .rdp-day {
+  width: calc(100% / 7);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .calendar__title {
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+
+  .calendar__daypicker {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .calendar__daypicker.rdp-root {
+    --rdp-day_button-width: 34px;
+    --rdp-day_button-height: 34px;
+    --rdp-day_button-border-radius: 9px;
+  }
+
+  .calendar__daypicker .rdp-month_caption {
+    font-size: 14px;
+  }
+
+  .calendar__daypicker .rdp-weekday,
+  .calendar__daypicker .rdp-day_button {
+    font-size: 12px;
+  }
+}

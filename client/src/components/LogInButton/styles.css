@@ -1,0 +1,20 @@
+.login-button {
+  padding: 10px 18px;
+  border: solid 1px var(--color-primary);
+  background: white;
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-size: var(--font-h3);
+  font-weight: var(--weight-bold);
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: var(--color-primary);
+}
