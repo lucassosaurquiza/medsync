@@ -1,5 +1,8 @@
 .appointments-view {
   width: 100%;
+  display: flex;
+  min-height: calc(100vh - 64px);
+  flex-direction: column;
 }
 
 .appointments-view__header {
@@ -73,6 +76,18 @@
 .appointments-view__list {
   display: grid;
   gap: 16px;
+  max-height: calc(100vh - 310px);
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.appointments-view__list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.appointments-view__list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background-color: #cbd5e1;
 }
 
 .appointments-view__empty {
@@ -164,7 +179,8 @@
   font-weight: 600;
 }
 
-.appointment-request-card__cancel-reason {
+.appointment-request-card__cancel-reason,
+.appointment-request-card__acceptance-note {
   grid-column: 2 / -1;
   display: grid;
   gap: 4px;
@@ -178,6 +194,16 @@
 
 .appointment-request-card__cancel-reason strong {
   color: #991b1b;
+}
+
+.appointment-request-card__acceptance-note {
+  border-color: #bbf7d0;
+  background-color: #f0fdf4;
+  color: #14532d;
+}
+
+.appointment-request-card__acceptance-note strong {
+  color: #166534;
 }
 
 .appointment-request-card__status {
@@ -320,6 +346,7 @@
 }
 
 .appointment-cancel-modal__secondary,
+.appointment-cancel-modal__primary,
 .appointment-cancel-modal__danger {
   min-height: 42px;
   border: none;
@@ -340,15 +367,31 @@
   color: #fff;
 }
 
+.appointment-cancel-modal__primary {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
 .appointment-cancel-modal__secondary:disabled,
+.appointment-cancel-modal__primary:disabled,
 .appointment-cancel-modal__danger:disabled {
   cursor: wait;
   opacity: 0.65;
 }
 
 @media (max-width: 768px) {
+  .appointments-view {
+    min-height: auto;
+  }
+
   .appointments-view__header h1 {
     font-size: 28px;
+  }
+
+  .appointments-view__list {
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 0;
   }
 
   .appointments-view__summary {
@@ -376,7 +419,8 @@
     flex-direction: column;
   }
 
-  .appointment-request-card__cancel-reason {
+  .appointment-request-card__cancel-reason,
+  .appointment-request-card__acceptance-note {
     grid-column: auto;
   }
 
@@ -390,6 +434,7 @@
   }
 
   .appointment-cancel-modal__secondary,
+  .appointment-cancel-modal__primary,
   .appointment-cancel-modal__danger {
     width: 100%;
   }

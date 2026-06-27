@@ -291,7 +291,8 @@ function AppointmentBooking () {
           month: 'long'
         }),
         time: selectedTime.slice(0, 5),
-        workplace: specialist.workplace || 'Lugar a confirmar'
+        workplace: specialist.workplace || 'Lugar a confirmar',
+        price: specialist.price
       })
 
       setIsModalOpen(true)
@@ -342,7 +343,11 @@ function AppointmentBooking () {
 
           <section className='appointment-booking__content'>
             <aside className='appointment-booking__left'>
-              <Form formData={formData} setFormData={setFormData} />
+              <Form
+                formData={formData}
+                setFormData={setFormData}
+                healthInsuranceOptions={specialist.healthInsurances || []}
+              />
             </aside>
 
             <section className='appointment-booking__center'>
@@ -366,7 +371,8 @@ function AppointmentBooking () {
                   <h3>Antes de confirmar</h3>
                   <p>
                     La solicitud quedara pendiente hasta que el especialista la
-                    acepte. Vas a recibir una notificacion con su respuesta.
+                    acepte. No pagas desde MedSync: el precio de consulta se
+                    abona en el consultorio segun indique el profesional.
                   </p>
                 </div>
               </section>

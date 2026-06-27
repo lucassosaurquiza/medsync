@@ -108,6 +108,73 @@
   margin-top: 18px;
 }
 
+.settings-form__health-insurances {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background-color: #f8fafc;
+}
+
+.settings-form__section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.settings-form__section-header h2 {
+  color: #0f172a;
+  font-size: 17px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.settings-form__section-header p,
+.settings-form__empty-list {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.settings-form__add {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--color-primary);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.settings-form__dynamic-list {
+  display: grid;
+  gap: 10px;
+}
+
+.settings-form__dynamic-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.settings-form__remove {
+  min-height: 44px;
+  border: none;
+  border-radius: 10px;
+  padding: 0 14px;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
 .settings-form__avatar {
   display: grid;
   grid-template-columns: 84px minmax(0, 1fr);
@@ -234,6 +301,10 @@
   }
 
   .settings-form__avatar {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-form__dynamic-row {
     grid-template-columns: 1fr;
   }
 

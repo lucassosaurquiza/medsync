@@ -14,7 +14,8 @@ const emptyProfile = {
   professionalLicense: '',
   workplace: '',
   price: '',
-  avatarUrl: ''
+  avatarUrl: '',
+  healthInsurances: []
 }
 
 function SettingsHeader () {
@@ -68,7 +69,10 @@ function SettingsView () {
           professionalLicense: data.professionalLicense || '',
           workplace: data.workplace || '',
           price: data.price ?? '',
-          avatarUrl: data.avatarUrl || ''
+          avatarUrl: data.avatarUrl || '',
+          healthInsurances: Array.isArray(data.healthInsurances)
+            ? data.healthInsurances
+            : []
         }
 
         setProfile(nextProfile)
@@ -95,6 +99,33 @@ function SettingsView () {
     setProfile(currentProfile => ({
       ...currentProfile,
       [name]: value
+    }))
+  }
+
+  const handleHealthInsuranceChange = (index, value) => {
+    setProfile(currentProfile => ({
+      ...currentProfile,
+      healthInsurances: currentProfile.healthInsurances.map(
+        (healthInsurance, healthInsuranceIndex) => (
+          healthInsuranceIndex === index ? value : healthInsurance
+        )
+      )
+    }))
+  }
+
+  const addHealthInsurance = () => {
+    setProfile(currentProfile => ({
+      ...currentProfile,
+      healthInsurances: [...currentProfile.healthInsurances, '']
+    }))
+  }
+
+  const removeHealthInsurance = index => {
+    setProfile(currentProfile => ({
+      ...currentProfile,
+      healthInsurances: currentProfile.healthInsurances.filter(
+        (_, healthInsuranceIndex) => healthInsuranceIndex !== index
+      )
     }))
   }
 
@@ -151,7 +182,12 @@ function SettingsView () {
 
     try {
       const token = localStorage.getItem('token')
-      let profileToSave = profile
+      let profileToSave = {
+        ...profile,
+        healthInsurances: profile.healthInsurances
+          .map(healthInsurance => healthInsurance.trim())
+          .filter(Boolean)
+      }
 
       if (avatarFile) {
         const formData = new FormData()
@@ -172,6 +208,7 @@ function SettingsView () {
 
         profileToSave = {
           ...profile,
+          healthInsurances: profileToSave.healthInsurances,
           avatarUrl: avatarData.avatarUrl
         }
       }
@@ -324,6 +361,53 @@ function SettingsView () {
               required
             />
           </label>
+
+          <section className='settings-form__health-insurances'>
+            <div className='settings-form__section-header'>
+              <div>
+                <h2>Obras sociales</h2>
+                <p>Agrega las coberturas con las que trabajas.</p>
+              </div>
+
+              <button
+                type='button'
+                className='settings-form__add'
+                onClick={addHealthInsurance}
+              >
+                +
+              </button>
+            </div>
+
+            {profile.healthInsurances.length === 0 ? (
+              <p className='settings-form__empty-list'>
+                Todavia no agregaste obras sociales. Se mostrara Particular por defecto.
+              </p>
+            ) : (
+              <div className='settings-form__dynamic-list'>
+                {profile.healthInsurances.map((healthInsurance, index) => (
+                  <div className='settings-form__dynamic-row' key={index}>
+                    <input
+                      type='text'
+                      value={healthInsurance}
+                      onChange={event =>
+                        handleHealthInsuranceChange(index, event.target.value)}
+                      placeholder='Ej: OSDE, Swiss Medical, Galeno'
+                      maxLength={100}
+                    />
+
+                    <button
+                      type='button'
+                      className='settings-form__remove'
+                      onClick={() => removeHealthInsurance(index)}
+                      aria-label='Eliminar obra social'
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
 
           <div className='settings-form__avatar'>
             <div className='settings-form__avatar-preview'>

@@ -19,16 +19,16 @@ function Home () {
           <div className='hero__content'>
             <span className='hero__badge'>
               <Crown size={24} />
-              Lider en Salud Digital
+              Agenda profesional para especialistas
             </span>
 
             <h1 className='hero__title'>
-              Gestiona tus turnos con la simpleza que tu consultorio necesita
+              Ordena tu agenda y atende mejor sin depender del cuaderno
             </h1>
 
             <p className='hero__description'>
-              Optimiza tu agenda, fideliza a tus pacientes y digitaliza tu
-              consultorio en minutos.
+              MedSync ayuda a profesionales de salud a recibir solicitudes de
+              turno, confirmar reservas y mostrar una presencia mas profesional.
             </p>
 
             <div className='hero__actions'>
@@ -41,25 +41,25 @@ function Home () {
 
       <section className='benefits'>
         <MainLayout>
-          <h2 className='benefits__title'>Beneficios</h2>
+          <h2 className='benefits__title'>Beneficios para tu consultorio</h2>
 
           <div className='benefits__grid'>
             <BenefitCard
               icon={<Clock size={24} />}
-              title='Ahorra Tiempo'
-              description='Automatizá la gestión de turnos y liberá a tu secretaría de tareas repetitivas.'
+              title='Menos gestion manual'
+              description='Centraliza solicitudes, confirmaciones y cancelaciones para reducir mensajes repetidos.'
             />
 
             <BenefitCard
               icon={<CalendarClock size={24} />}
-              title='Imagen Profesional'
-              description='Brindá a tus pacientes un portal de reservas intuitivo y con tu propia marca.'
+              title='Imagen profesional'
+              description='Mostra tu perfil, especialidad, consultorio, precio y disponibilidad en un solo lugar.'
             />
 
             <BenefitCard
               icon={<Bell size={24} />}
-              title='Recordatorios'
-              description='Alertas automáticas por WhatsApp para reducir el ausentismo hasta en un 40%.'
+              title='Control de agenda'
+              description='Recibi notificaciones cuando un paciente solicita, cancela o espera respuesta.'
             />
           </div>
         </MainLayout>
@@ -71,7 +71,8 @@ function Home () {
             <h2 className='testimonials__title'>Lo que dicen los colegas</h2>
 
             <p className='testimonials__description'>
-              Más de 500 profesionales ya transformaron su práctica.
+              Pensado para especialistas que estan empezando a trabajar de
+              forma independiente.
             </p>
           </div>
 
@@ -82,7 +83,7 @@ function Home () {
       <section className='pricing'>
         <MainLayout>
           <div className='pricing__container'>
-            <h1 className='pricing__title'>Planes a tu medida</h1>
+            <h1 className='pricing__title'>Un plan simple para empezar</h1>
             <PricingCard />
           </div>
         </MainLayout>

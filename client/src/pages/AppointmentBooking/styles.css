@@ -170,17 +170,17 @@
   }
 
   .appointment-booking__left {
-    order: 3;
+    order: 1;
     border-bottom: none;
   }
 
   .appointment-booking__center {
-    order: 1;
+    order: 2;
     border: none;
   }
 
   .appointment-booking__right {
-    order: 2;
+    order: 3;
   }
 
   .appointment-booking__details {

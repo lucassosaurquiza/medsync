@@ -7,16 +7,17 @@ const testimonials = [
   {
     id: 1,
     testimonial:
-      'MedSync cambió radicalmente cómo organizo mi consultorio. Los pacientes aman la facilidad de sacar turno online.'
+      'MedSync me ayudo a ordenar las solicitudes sin vivir respondiendo mensajes sueltos.'
   },
   {
     id: 2,
     testimonial:
-      'Redujimos muchísimo las ausencias gracias a los recordatorios automáticos.'
+      'Ahora mis pacientes ven mi disponibilidad y yo decido que turnos confirmar.'
   },
   {
     id: 3,
-    testimonial: 'La implementación fue rápida y el soporte excelente.'
+    testimonial:
+      'La agenda se ve mas profesional y el flujo de reservas es facil de seguir.'
   }
 ]
 

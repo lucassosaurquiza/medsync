@@ -1,6 +1,44 @@
 const { v2: cloudinary } = require('cloudinary')
 const pool = require('../config/db')
 
+const normalizeHealthInsurances = healthInsurances => {
+  if (!Array.isArray(healthInsurances)) return []
+
+  const normalizedNames = healthInsurances
+    .map(healthInsurance => (
+      typeof healthInsurance === 'string' ? healthInsurance.trim() : ''
+    ))
+    .filter(Boolean)
+    .map(healthInsurance => healthInsurance.slice(0, 100))
+
+  return [...new Set(normalizedNames)].slice(0, 30)
+}
+
+const getHealthInsurancesBySpecialistIds = async (specialistIds, connection = pool) => {
+  const uniqueIds = [...new Set(specialistIds.filter(Boolean))]
+
+  if (uniqueIds.length === 0) return {}
+
+  const [rows] = await connection.query(
+    `
+    SELECT specialistId, name
+    FROM specialist_health_insurances
+    WHERE specialistId IN (?)
+    ORDER BY name ASC
+    `,
+    [uniqueIds]
+  )
+
+  return rows.reduce((acc, row) => {
+    if (!acc[row.specialistId]) {
+      acc[row.specialistId] = []
+    }
+
+    acc[row.specialistId].push(row.name)
+    return acc
+  }, {})
+}
+
 const hasCloudinaryConfig = () => (
   process.env.CLOUDINARY_CLOUD_NAME &&
   process.env.CLOUDINARY_API_KEY &&
@@ -153,8 +191,14 @@ const getSpecialists = async (req, res) => {
 
   try {
     const [rows] = await pool.query(query, values)
+    const healthInsurancesBySpecialist = await getHealthInsurancesBySpecialistIds(
+      rows.map(row => row.id)
+    )
 
-    res.json(rows)
+    res.json(rows.map(row => ({
+      ...row,
+      healthInsurances: healthInsurancesBySpecialist[row.id] || []
+    })))
   } catch (error) {
     console.error('Error al obtener especialistas:', error)
 
@@ -217,7 +261,12 @@ const getSpecialistsById = async (req, res) => {
       })
     }
 
-    res.json(rows[0])
+    const healthInsurancesBySpecialist = await getHealthInsurancesBySpecialistIds([rows[0].id])
+
+    res.json({
+      ...rows[0],
+      healthInsurances: healthInsurancesBySpecialist[rows[0].id] || []
+    })
   } catch (error) {
     console.error('Error al obtener el especialista:', error)
 
@@ -237,6 +286,7 @@ const getMyProfile = async (req, res) => {
         users.name,
         users.lastName,
         users.email,
+        specialists.id AS specialistId,
         specialists.specialty,
         specialists.professionalLicense,
         specialists.workplace,
@@ -256,7 +306,14 @@ const getMyProfile = async (req, res) => {
       })
     }
 
-    res.json(rows[0])
+    const healthInsurancesBySpecialist = await getHealthInsurancesBySpecialistIds(
+      [rows[0].specialistId]
+    )
+
+    res.json({
+      ...rows[0],
+      healthInsurances: healthInsurancesBySpecialist[rows[0].specialistId] || []
+    })
   } catch (error) {
     console.error('Error al obtener el perfil profesional:', error)
 
@@ -276,7 +333,8 @@ const updateMyProfile = async (req, res) => {
     professionalLicense,
     workplace,
     avatarUrl,
-    price
+    price,
+    healthInsurances
   } = req.body
 
   if (
@@ -296,6 +354,8 @@ const updateMyProfile = async (req, res) => {
         'Nombre, apellido, especialidad, matricula y consultorio son obligatorios'
     })
   }
+
+  const normalizedHealthInsurances = normalizeHealthInsurances(healthInsurances)
 
   const normalizedPrice = Number(price)
 
@@ -362,6 +422,24 @@ const updateMyProfile = async (req, res) => {
       ]
     )
 
+    await connection.query(
+      `
+      DELETE FROM specialist_health_insurances
+      WHERE specialistId = ?
+      `,
+      [profiles[0].id]
+    )
+
+    for (const healthInsurance of normalizedHealthInsurances) {
+      await connection.query(
+        `
+        INSERT INTO specialist_health_insurances (specialistId, name)
+        VALUES (?, ?)
+        `,
+        [profiles[0].id, healthInsurance]
+      )
+    }
+
     await connection.commit()
     transactionStarted = false
 
@@ -374,7 +452,8 @@ const updateMyProfile = async (req, res) => {
         professionalLicense: professionalLicense.trim(),
         workplace: workplace.trim(),
         avatarUrl: typeof avatarUrl === 'string' ? avatarUrl.trim() : '',
-        price: normalizedPrice
+        price: normalizedPrice,
+        healthInsurances: normalizedHealthInsurances
       }
     })
   } catch (error) {

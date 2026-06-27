@@ -194,6 +194,33 @@ function ReserveYourTurn () {
                       </p>
                     </div>
 
+                    {specialist.healthInsurances?.length > 0 && (
+                      <div className='specialist-card__insurances'>
+                        <span className='specialist-card__insurances-title'>
+                          Obras sociales:
+                        </span>
+
+                        <div className='specialist-card__insurance-list'>
+                          {specialist.healthInsurances
+                            .slice(0, 3)
+                            .map(healthInsurance => (
+                              <span
+                                className='specialist-card__insurance'
+                                key={healthInsurance}
+                              >
+                                {healthInsurance}
+                              </span>
+                            ))}
+
+                          {specialist.healthInsurances.length > 3 && (
+                            <span className='specialist-card__insurance specialist-card__insurance--more'>
+                              +{specialist.healthInsurances.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     <strong className='specialist-card__price'>
                       ${Number(specialist.price).toLocaleString('es-AR')} ARS
                     </strong>

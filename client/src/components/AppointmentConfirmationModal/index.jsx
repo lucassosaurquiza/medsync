@@ -19,10 +19,10 @@ function AppointmentConfirmationModal ({ isOpen, onClose, appointment }) {
           <Check size={28} />
         </div>
 
-        <h2 className='appointment-modal__title'>¡Reserva Confirmada!</h2>
+        <h2 className='appointment-modal__title'>Solicitud enviada</h2>
 
         <p className='appointment-modal__description'>
-          Tu turno ha sido agendado exitosamente.
+          El especialista recibio tu solicitud y debera confirmarla.
         </p>
 
         <div className='appointment-modal__body'>
@@ -55,18 +55,27 @@ function AppointmentConfirmationModal ({ isOpen, onClose, appointment }) {
               <div className='appointment-modal__location'>
                 <MapPin size={18} />
                 <div>
-                  <span className='appointment-modal__label'>Ubicación</span>
+                  <span className='appointment-modal__label'>Ubicacion</span>
                   <strong>{appointment.workplace}</strong>
                 </div>
+              </div>
+
+              <div className='appointment-modal__payment'>
+                <span className='appointment-modal__label'>Pago</span>
+                <strong>No se paga desde MedSync.</strong>
+                <p>
+                  El precio de consulta se abona en el consultorio segun las
+                  condiciones del profesional.
+                </p>
               </div>
             </div>
           </div>
 
           <aside className='appointment-modal__actions'>
             <div className='appointment-modal__next'>
-              <h3>Próximos pasos</h3>
-              <p>• Presentarse 15 minutos antes.</p>
-              <p>• Traer credencial de prepaga y DNI.</p>
+              <h3>Proximos pasos</h3>
+              <p>La reserva queda pendiente hasta que el especialista la acepte.</p>
+              <p>Vas a recibir una notificacion con su respuesta.</p>
             </div>
 
             <Link

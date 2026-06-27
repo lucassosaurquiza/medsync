@@ -160,6 +160,38 @@
   font-size: 13px;
 }
 
+.specialist-card__insurances {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.specialist-card__insurances-title {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.specialist-card__insurance-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.specialist-card__insurance {
+  border-radius: 999px;
+  background-color: #ecfdf5;
+  color: #007f5f;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.specialist-card__insurance--more {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
 .specialist-card__price {
   display: block;
   margin-bottom: 18px;

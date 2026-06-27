@@ -133,6 +133,21 @@
   color: #007f5f;
 }
 
+.appointment-modal__payment {
+  grid-column: 1 / -1;
+  padding: 14px;
+  border: 1px solid rgba(0, 128, 96, 0.16);
+  border-radius: 10px;
+  background-color: #ecfdf5;
+}
+
+.appointment-modal__payment p {
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 .appointment-modal__actions {
   display: flex;
   flex-direction: column;

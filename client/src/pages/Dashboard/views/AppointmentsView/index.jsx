@@ -16,7 +16,9 @@ function AppointmentsView () {
   const [error, setError] = useState(null)
   const [updatingAppointmentId, setUpdatingAppointmentId] = useState(null)
   const [appointmentToCancel, setAppointmentToCancel] = useState(null)
+  const [appointmentToAccept, setAppointmentToAccept] = useState(null)
   const [cancellationReason, setCancellationReason] = useState('')
+  const [acceptanceNote, setAcceptanceNote] = useState('')
 
   const getStatusText = status =>
     ({
@@ -44,7 +46,7 @@ function AppointmentsView () {
       const token = localStorage.getItem('token')
 
       if (!token) {
-        throw new Error('No hay sesión activa')
+        throw new Error('No hay sesion activa')
       }
 
       const response = await fetch(`${API_URL}/specialist/me`, {
@@ -84,22 +86,46 @@ function AppointmentsView () {
     setCancellationReason('')
   }
 
+  const closeAcceptanceModal = () => {
+    if (updatingAppointmentId !== null) return
+
+    setAppointmentToAccept(null)
+    setAcceptanceNote('')
+  }
+
   const openCancellationModal = appointment => {
     setAppointmentToCancel(appointment)
     setCancellationReason('')
   }
 
+  const openAcceptanceModal = appointment => {
+    setAppointmentToAccept(appointment)
+    setAcceptanceNote('')
+  }
+
   const updateAppointmentStatus = async (
     appointmentId,
     status,
-    reason = ''
+    details = {}
   ) => {
     if (updatingAppointmentId !== null) return
 
-    const normalizedReason = reason.trim()
+    const normalizedCancellationReason =
+      typeof details.cancellationReason === 'string'
+        ? details.cancellationReason.trim()
+        : ''
+    const normalizedAcceptanceNote =
+      typeof details.acceptanceNote === 'string'
+        ? details.acceptanceNote.trim()
+        : ''
 
-    if (status === 'cancelled' && normalizedReason.length < 5) {
-      toast.error('Ingresá un motivo de al menos 5 caracteres')
+    if (status === 'cancelled' && normalizedCancellationReason.length < 5) {
+      toast.error('Ingresa un motivo de al menos 5 caracteres')
+      return
+    }
+
+    if (status === 'confirmed' && normalizedAcceptanceNote.length < 5) {
+      toast.error('Ingresa condiciones de aceptacion de al menos 5 caracteres')
       return
     }
 
@@ -119,7 +145,9 @@ function AppointmentsView () {
         body: JSON.stringify({
           status,
           cancellationReason:
-            status === 'cancelled' ? normalizedReason : undefined
+            status === 'cancelled' ? normalizedCancellationReason : undefined,
+          acceptanceNote:
+            status === 'confirmed' ? normalizedAcceptanceNote : undefined
         })
       })
 
@@ -137,12 +165,22 @@ function AppointmentsView () {
                 status,
                 cancellationReason:
                   status === 'cancelled'
-                    ? normalizedReason
-                    : appointment.cancellationReason
+                    ? normalizedCancellationReason
+                    : appointment.cancellationReason,
+                acceptanceNote:
+                  status === 'confirmed'
+                    ? normalizedAcceptanceNote
+                    : appointment.acceptanceNote
               }
             : appointment
         )
       )
+
+      if (status === 'confirmed') {
+        setSelectedStatus('confirmed')
+        setAppointmentToAccept(null)
+        setAcceptanceNote('')
+      }
 
       if (status === 'cancelled') {
         setSelectedStatus('cancelled')
@@ -157,9 +195,11 @@ function AppointmentsView () {
   }
 
   const filteredAppointments = useMemo(() => {
-    return appointments.filter(
-      appointment => appointment.status === selectedStatus
-    )
+    return appointments
+      .filter(appointment => appointment.status === selectedStatus)
+      .sort((firstAppointment, secondAppointment) => (
+        secondAppointment.id - firstAppointment.id
+      ))
   }, [appointments, selectedStatus])
 
   const confirmCancellation = () => {
@@ -168,7 +208,17 @@ function AppointmentsView () {
     updateAppointmentStatus(
       appointmentToCancel.id,
       'cancelled',
-      cancellationReason
+      { cancellationReason }
+    )
+  }
+
+  const confirmAcceptance = () => {
+    if (!appointmentToAccept) return
+
+    updateAppointmentStatus(
+      appointmentToAccept.id,
+      'confirmed',
+      { acceptanceNote }
     )
   }
 
@@ -177,8 +227,8 @@ function AppointmentsView () {
       <header className='appointments-view__header'>
         <div>
           <span className='appointments-view__eyebrow'>Turnos</span>
-          <h1>Gestión de turnos</h1>
-          <p>Aceptá, rechazá y revisá las reservas de tus pacientes.</p>
+          <h1>Gestion de turnos</h1>
+          <p>Acepta, rechaza y revisa las reservas de tus pacientes.</p>
         </div>
       </header>
 
@@ -225,7 +275,7 @@ function AppointmentsView () {
           {filteredAppointments.length === 0 ? (
             <div className='appointments-view__empty'>
               <h3>No hay turnos para mostrar</h3>
-              <p>Cuando existan turnos en esta categoría aparecerán acá.</p>
+              <p>Cuando existan turnos en esta categoria apareceran aca.</p>
             </div>
           ) : (
             filteredAppointments.map(appointment => (
@@ -255,11 +305,18 @@ function AppointmentsView () {
                   </div>
 
                   <div className='appointment-request-card__details'>
-                    <span>📅 {appointment.date}</span>
-                    <span>🕒 {appointment.time}</span>
-                    <span>🏥 {appointment.healthInsurance}</span>
+                    <span>Fecha: {appointment.date}</span>
+                    <span>Hora: {appointment.time}</span>
+                    <span>{appointment.healthInsurance || 'Particular'}</span>
                   </div>
                 </div>
+
+                {appointment.status === 'confirmed' && appointment.acceptanceNote && (
+                  <div className='appointment-request-card__acceptance-note'>
+                    <strong>Condiciones de aceptacion:</strong>
+                    <span>{appointment.acceptanceNote}</span>
+                  </div>
+                )}
 
                 {appointment.status === 'cancelled' && appointment.cancellationReason && (
                   <div className='appointment-request-card__cancel-reason'>
@@ -276,9 +333,7 @@ function AppointmentsView () {
                         className='appointment-request-card__accept'
                         disabled={updatingAppointmentId !== null}
                         type='button'
-                        onClick={() =>
-                          updateAppointmentStatus(appointment.id, 'confirmed')
-                        }
+                        onClick={() => openAcceptanceModal(appointment)}
                       >
                         Aceptar
                       </button>
@@ -302,6 +357,67 @@ function AppointmentsView () {
         </section>
       )}
 
+      {appointmentToAccept && (
+        <div className='appointment-cancel-modal'>
+          <div
+            className='appointment-cancel-modal__overlay'
+            onClick={closeAcceptanceModal}
+          />
+
+          <section className='appointment-cancel-modal__content'>
+            <h2>Aceptar turno</h2>
+
+            <p>
+              Indica las condiciones o recomendaciones que el paciente debe
+              conocer antes de asistir.
+            </p>
+
+            <div className='appointment-cancel-modal__summary'>
+              <strong>
+                {getPatientFullName(appointmentToAccept) ||
+                  'Paciente sin nombre'}
+              </strong>
+              <span>
+                {appointmentToAccept.date} - {appointmentToAccept.time}
+              </span>
+            </div>
+
+            <label>
+              Condiciones para el paciente
+              <textarea
+                value={acceptanceNote}
+                onChange={event => setAcceptanceNote(event.target.value)}
+                placeholder='Ej: Asistir 10 minutos antes y traer estudios previos.'
+                maxLength={255}
+                autoFocus
+              />
+            </label>
+
+            <div className='appointment-cancel-modal__actions'>
+              <button
+                type='button'
+                className='appointment-cancel-modal__secondary'
+                onClick={closeAcceptanceModal}
+                disabled={updatingAppointmentId !== null}
+              >
+                Volver
+              </button>
+
+              <button
+                type='button'
+                className='appointment-cancel-modal__primary'
+                onClick={confirmAcceptance}
+                disabled={updatingAppointmentId !== null}
+              >
+                {updatingAppointmentId !== null
+                  ? 'Procesando...'
+                  : 'Confirmar aceptacion'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
       {appointmentToCancel && (
         <div className='appointment-cancel-modal'>
           <div
@@ -317,7 +433,7 @@ function AppointmentsView () {
             </h2>
 
             <p>
-              Indicá el motivo para que el paciente entienda qué ocurrió.
+              Indica el motivo para que el paciente entienda que ocurrio.
             </p>
 
             <div className='appointment-cancel-modal__summary'>
@@ -326,7 +442,7 @@ function AppointmentsView () {
                   'Paciente sin nombre'}
               </strong>
               <span>
-                {appointmentToCancel.date} · {appointmentToCancel.time}
+                {appointmentToCancel.date} - {appointmentToCancel.time}
               </span>
             </div>
 
@@ -335,7 +451,7 @@ function AppointmentsView () {
               <textarea
                 value={cancellationReason}
                 onChange={event => setCancellationReason(event.target.value)}
-                placeholder='Ej: No podré atender en ese horario.'
+                placeholder='Ej: No podre atender en ese horario.'
                 maxLength={255}
                 autoFocus
               />

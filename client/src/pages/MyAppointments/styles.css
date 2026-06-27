@@ -89,6 +89,21 @@
   font-weight: 700;
 }
 
+.next-appointment__acceptance-note {
+  display: grid;
+  gap: 4px;
+  margin-top: 18px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.12);
+  font-size: 13px;
+}
+
+.next-appointment__acceptance-note span {
+  line-height: 1.45;
+}
+
 .next-appointment--empty {
   background: #fff;
   color: #0f172a;
@@ -164,7 +179,8 @@
   color: #94a3b8;
 }
 
-.appointment-card__cancel-reason {
+.appointment-card__cancel-reason,
+.appointment-card__acceptance-note {
   grid-column: 2 / -1;
   display: grid;
   gap: 4px;
@@ -178,6 +194,16 @@
 
 .appointment-card__cancel-reason strong {
   color: #991b1b;
+}
+
+.appointment-card__acceptance-note {
+  border-color: #bbf7d0;
+  background-color: #f0fdf4;
+  color: #14532d;
+}
+
+.appointment-card__acceptance-note strong {
+  color: #166534;
 }
 
 .appointment-card__avatar {
@@ -296,7 +322,8 @@
     width: 100%;
   }
 
-  .appointment-card__cancel-reason {
+  .appointment-card__cancel-reason,
+  .appointment-card__acceptance-note {
     grid-column: auto;
   }
 }

@@ -209,6 +209,7 @@ const getAppointments = async (req, res) => {
         appointments.healthInsurance,
         appointments.reason,
         appointments.cancellationReason,
+        appointments.acceptanceNote,
         patients.dni,
         patients.phone,
         patient_user.lastName AS patientLastName,
@@ -248,6 +249,7 @@ const getAppointmentById = async (req, res) => {
         appointments.healthInsurance,
         appointments.reason,
         appointments.cancellationReason,
+        appointments.acceptanceNote,
         patients.dni,
         patients.phone,
         patient_user.lastName AS patientLastName,
@@ -303,6 +305,7 @@ const getMyAppointments = async (req, res) => {
         appointments.time,
         appointments.status,
         appointments.cancellationReason,
+        appointments.acceptanceNote,
         specialists.specialty,
         specialist_user.name,
         specialist_user.lastName
@@ -359,6 +362,7 @@ const getSpecialistAppointments = async (req, res) => {
         appointments.healthInsurance,
         appointments.reason,
         appointments.cancellationReason,
+        appointments.acceptanceNote,
         patients.dni,
         patients.phone,
         patient_user.name AS patientName,
@@ -416,6 +420,7 @@ const getSpecialistAgenda = async (req, res) => {
         appointments.healthInsurance,
         appointments.reason,
         appointments.cancellationReason,
+        appointments.acceptanceNote,
         patients.dni,
         patients.phone,
         patient_user.name AS patientName,
@@ -448,7 +453,7 @@ const getSpecialistAgenda = async (req, res) => {
 
 const updateAppointment = async (req, res) => {
   const { id } = req.params
-  const { status, cancellationReason } = req.body
+  const { status, cancellationReason, acceptanceNote } = req.body
 
   const allowedStatuses = ['confirmed', 'cancelled']
 
@@ -460,6 +465,8 @@ const updateAppointment = async (req, res) => {
 
   const normalizedCancellationReason =
     typeof cancellationReason === 'string' ? cancellationReason.trim() : ''
+  const normalizedAcceptanceNote =
+    typeof acceptanceNote === 'string' ? acceptanceNote.trim() : ''
 
   if (status === 'cancelled' && normalizedCancellationReason.length < 5) {
     return res.status(400).json({
@@ -522,12 +529,13 @@ const updateAppointment = async (req, res) => {
     await connection.query(
       `
       UPDATE appointments
-      SET status = ?, cancellationReason = ?
+      SET status = ?, cancellationReason = ?, acceptanceNote = ?
       WHERE id = ?
       `,
       [
         status,
         status === 'cancelled' ? normalizedCancellationReason : null,
+        status === 'confirmed' ? normalizedAcceptanceNote || null : null,
         id
       ]
     )
@@ -537,7 +545,7 @@ const updateAppointment = async (req, res) => {
 
     const notificationMessage =
       status === 'confirmed'
-        ? `Tu turno con ${appointment.specialistName} ${appointment.specialistLastName} fue confirmado.`
+        ? `Tu turno con ${appointment.specialistName} ${appointment.specialistLastName} fue confirmado.${normalizedAcceptanceNote ? ` Indicaciones: ${normalizedAcceptanceNote}` : ''}`
         : `Tu turno con ${appointment.specialistName} ${appointment.specialistLastName} fue cancelado. Motivo: ${normalizedCancellationReason}`
 
     const notificationType = status === 'confirmed' ? 'success' : 'error'

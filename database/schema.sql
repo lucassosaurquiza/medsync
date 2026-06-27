@@ -31,6 +31,7 @@ CREATE TABLE `appointments` (
   `healthInsurance` varchar(100) DEFAULT NULL,
   `reason` text,
   `cancellationReason` varchar(255) DEFAULT NULL,
+  `acceptanceNote` varchar(255) DEFAULT NULL,
   `status` enum('pending','confirmed','cancelled') DEFAULT 'pending',
   `activeSlot` tinyint GENERATED ALWAYS AS ((case when (`status` in (_utf8mb4'pending',_utf8mb4'confirmed')) then 1 else NULL end)) STORED,
   PRIMARY KEY (`id`),
@@ -147,6 +148,24 @@ CREATE TABLE `specialists` (
   CONSTRAINT `specialists_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `chk_specialists_appointment_duration` CHECK ((`appointmentDuration` between 10 and 240))
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `specialist_health_insurances`
+--
+
+DROP TABLE IF EXISTS `specialist_health_insurances`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `specialist_health_insurances` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `specialistId` int NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_specialist_health_insurance` (`specialistId`,`name`),
+  CONSTRAINT `fk_health_insurances_specialist` FOREIGN KEY (`specialistId`) REFERENCES `specialists` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

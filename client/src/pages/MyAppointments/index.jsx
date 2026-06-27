@@ -163,7 +163,7 @@ function MyAppointments () {
             <div>
               <span className='my-appointments__eyebrow'>Agenda personal</span>
               <h1>Mis Turnos</h1>
-              <p>Consultá el estado de tus reservas médicas.</p>
+              <p>Consulta el estado de tus reservas medicas.</p>
             </div>
           </section>
 
@@ -171,8 +171,8 @@ function MyAppointments () {
             <p className='my-appointments__loading'>Cargando turnos...</p>
           ) : appointments.length === 0 ? (
             <section className='my-appointments__empty'>
-              <h2>No tenés turnos todavía</h2>
-              <p>Cuando reserves un turno, aparecerá en esta sección.</p>
+              <h2>No tenes turnos todavia</h2>
+              <p>Cuando reserves un turno, aparecera en esta seccion.</p>
             </section>
           ) : (
             <>
@@ -180,7 +180,7 @@ function MyAppointments () {
                 <section className='next-appointment'>
                   <div className='next-appointment__content'>
                     <span className='next-appointment__label'>
-                      Próximo turno
+                      Proximo turno
                     </span>
 
                     <h2>
@@ -190,9 +190,17 @@ function MyAppointments () {
                     <p>{nextAppointment.specialty}</p>
 
                     <div className='next-appointment__details'>
-                      <span>📅 {formatDate(nextAppointment.date)}</span>
-                      <span>🕒 {formatTime(nextAppointment.time)} hs</span>
+                      <span>Fecha: {formatDate(nextAppointment.date)}</span>
+                      <span>Hora: {formatTime(nextAppointment.time)} hs</span>
                     </div>
+
+                    {nextAppointment.status === 'confirmed' &&
+                      nextAppointment.acceptanceNote && (
+                        <div className='next-appointment__acceptance-note'>
+                          <strong>Indicaciones del especialista:</strong>
+                          <span>{nextAppointment.acceptanceNote}</span>
+                        </div>
+                    )}
                   </div>
 
                   <span
@@ -205,14 +213,14 @@ function MyAppointments () {
                 <section className='next-appointment next-appointment--empty'>
                   <div className='next-appointment__content'>
                     <span className='next-appointment__label'>
-                      Próximo turno
+                      Proximo turno
                     </span>
 
-                    <h2>No tenés próximos turnos</h2>
+                    <h2>No tenes proximos turnos</h2>
 
                     <p>
-                      Reservá una nueva consulta y vas a poder verla en esta
-                      sección.
+                      Reserva una nueva consulta y vas a poder verla en esta
+                      seccion.
                     </p>
                   </div>
 
@@ -263,10 +271,18 @@ function MyAppointments () {
                       </div>
 
                       <div className='appointment-card__details'>
-                        <span>📅 {formatDate(appointment.date)}</span>
-                        <span>🕒 {formatTime(appointment.time)} hs</span>
+                        <span>Fecha: {formatDate(appointment.date)}</span>
+                        <span>Hora: {formatTime(appointment.time)} hs</span>
                       </div>
                     </div>
+
+                    {appointment.status === 'confirmed' &&
+                      appointment.acceptanceNote && (
+                        <div className='appointment-card__acceptance-note'>
+                          <strong>Indicaciones del especialista:</strong>
+                          <span>{appointment.acceptanceNote}</span>
+                        </div>
+                    )}
 
                     {appointment.status === 'cancelled' &&
                       appointment.cancellationReason && (

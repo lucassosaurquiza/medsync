@@ -1,6 +1,13 @@
 import './styles.css'
 
-function Form ({ formData, setFormData }) {
+function Form ({ formData, setFormData, healthInsuranceOptions = [] }) {
+  const normalizedHealthInsuranceOptions = [
+    'Particular',
+    ...healthInsuranceOptions
+  ].filter((option, index, options) => (
+    option && options.indexOf(option) === index
+  ))
+
   const handleChange = event => {
     const { name, value } = event.target
 
@@ -59,11 +66,11 @@ function Form ({ formData, setFormData }) {
             onChange={handleChange}
           >
             <option value=''>Seleccionar</option>
-            <option value='Particular'>Particular</option>
-            <option value='OSDE'>OSDE</option>
-            <option value='Swiss Medical'>Swiss Medical</option>
-            <option value='Galeno'>Galeno</option>
-            <option value='Medifé'>Medifé</option>
+            {normalizedHealthInsuranceOptions.map(healthInsurance => (
+              <option key={healthInsurance} value={healthInsurance}>
+                {healthInsurance}
+              </option>
+            ))}
           </select>
 
           <label className='data-form__label' htmlFor='reason'>
@@ -74,7 +81,7 @@ function Form ({ formData, setFormData }) {
             className='data-form__description'
             id='reason'
             name='reason'
-            placeholder='Breve descripción...'
+            placeholder='Breve descripcion...'
             value={formData.reason}
             onChange={handleChange}
           />
